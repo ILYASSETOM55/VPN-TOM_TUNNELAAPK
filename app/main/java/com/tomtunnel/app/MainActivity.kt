@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startVpn() {
-        startForegroundService(Intent(this, TomVpnService::class.java).putExtra("server", pendingServer))
+        startForegroundService(Intent(this, JephVpnService::class.java).putExtra("server", pendingServer))
     }
 
     inner class Bridge {
@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
             if (i != null) vpnPermission.launch(i) else startVpn()
         }
         @JavascriptInterface fun disconnect() = runOnUiThread {
-            startService(Intent(this@MainActivity, TomVpnService::class.java).setAction(TomVpnService.STOP))
+            startService(Intent(this@MainActivity, JephVpnService::class.java).setAction(JephVpnService.STOP))
         }
         @JavascriptInterface fun refreshIp() { this@MainActivity.refreshIp() }
         @JavascriptInterface fun openUrl(u: String) = runOnUiThread { this@MainActivity.openUrl(u) }
@@ -169,7 +169,7 @@ class MainActivity : ComponentActivity() {
             return try { if (cm.hasPrimaryClip()) cm.primaryClip?.getItemAt(0)?.coerceToText(this@MainActivity)?.toString() ?: "" else "" } catch (_: Throwable) { "" }
         }
         @JavascriptInterface fun copyText(t: String) = runOnUiThread {
-            (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText("tom", t))
+            (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText("jeph", t))
             Toast.makeText(this@MainActivity, "Copié", Toast.LENGTH_SHORT).show()
         }
         // partage vers WhatsApp / Telegram / Messages... (le fichier .jeph est joint)
