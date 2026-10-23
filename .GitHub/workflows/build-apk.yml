@@ -2,7 +2,7 @@ name: Build TOM_TUNNEL APK
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, principal]
   pull_request:
   workflow_dispatch:
 
@@ -13,11 +13,45 @@ jobs:
   build:
     name: Build debug APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 50
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Fix project structure
+        run: |
+          set -euxo pipefail
+          if [ -f "build.gradle (1).kts" ] && [ ! -f build.gradle.kts ]; then
+            mv "build.gradle (1).kts" build.gradle.kts
+          fi
+          if [ -d app/main ] && [ ! -d app/src/main ]; then
+            mkdir -p app/src
+            mv app/main app/src/main
+          fi
+          mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64
+          if [ -f settings.gradle.kts ] && ! grep -q "jitpack.io" settings.gradle.kts; then
+            cat > settings.gradle.kts << 'SEOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+                  maven { url = uri("https://jitpack.io") }
+              }
+          }
+          rootProject.name = "TOM_TUNNEL"
+          include(":app")
+          SEOF
+          fi
+          echo "Structure OK"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -25,10 +59,40 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Install Android SDK (manual)
+        run: |
+          set -euxo pipefail
+          ANDROID_ROOT="${HOME}/android-sdk"
+          mkdir -p "${ANDROID_ROOT}/cmdline-tools"
+          curl -fsSL -o /tmp/cmdtools.zip \
+            https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q /tmp/cmdtools.zip -d "${ANDROID_ROOT}/cmdline-tools"
+          mv "\( {ANDROID_ROOT}/cmdline-tools/cmdline-tools" " \){ANDROID_ROOT}/cmdline-tools/latest"
+          rm -f /tmp/cmdtools.zip
 
-      - name: Install Go (for DNSTT bootstrap)
+          export ANDROID_HOME="${ANDROID_ROOT}"
+          export ANDROID_SDK_ROOT="${ANDROID_ROOT}"
+          export PATH="\( {PATH}: \){ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+
+          # Accepter toutes les licences sans interaction
+          yes | sdkmanager --licenses >/dev/null || true
+
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
+
+          echo "ANDROID_HOME=${ANDROID_HOME}" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> "$GITHUB_ENV"
+          echo "${ANDROID_HOME}/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "${ANDROID_HOME}/platform-tools" >> "$GITHUB_PATH"
+          echo "${ANDROID_HOME}/build-tools/34.0.0" >> "$GITHUB_PATH"
+
+          echo "SDK installé :"
+          ls "${ANDROID_HOME}/platforms"
+          ls "${ANDROID_HOME}/build-tools"
+
+      - name: Install Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
@@ -41,9 +105,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          cat local.properties
+
       - name: Build debug APK
         run: |
-          chmod +x gradlew 2>/dev/null || true
           if [ -x ./gradlew ]; then
             ./gradlew --no-daemon --stacktrace :app:assembleDebug
           else
@@ -54,8 +122,8 @@ jobs:
         run: |
           APK="app/build/outputs/apk/debug/app-debug.apk"
           if [ ! -s "$APK" ]; then
-            echo "::error::APK not found"
-            find app/build/outputs -type f -name '*.apk' -print || true
+            echo "::error::APK introuvable"
+            find app/build/outputs -type f -name '*.apk' 2>/dev/null || true
             exit 1
           fi
           ls -lh "$APK"
