@@ -3,7 +3,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LIBS="$ROOT/app/libs"
 JNI="$ROOT/app/src/main/jniLibs"
-TMP="${TMPDIR:-/tmp}/tomtunnel-engines"
+TMP="${TMPDIR:-/tmp}/TOM-TUNNEL-engines"
 mkdir -p "$LIBS" "$JNI/arm64-v8a" "$JNI/x86_64" "$TMP"
 HEV=2.18.0
 XRAY=26.9.8
