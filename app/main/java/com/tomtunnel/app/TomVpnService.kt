@@ -14,7 +14,7 @@ import java.io.File
 import java.net.InetSocketAddress
 import java.net.Socket
 
-class TomVpnService : VpnService() {
+class JephVpnService : VpnService() {
     companion object { const val STOP = "com.tomtunnel.app.STOP"; const val RECONNECT = "com.tomtunnel.app.RECONNECT" }
     private var lastServer: JSONObject? = null
     @Volatile private var gen = 0
@@ -43,7 +43,7 @@ class TomVpnService : VpnService() {
             engine = if (s.optString("type") == "SSH SlowDNS") SlowDnsEngine() else XrayEngine()
             engine!!.start(this, s)
 
-            tun = Builder().setSession("TOM_TUNNEL").setMtu(1400)
+            tun = Builder().setSession("TOM TUNNEL").setMtu(1400)
                 .addAddress("10.10.14.1", 30)
                 .addAddress("fd00:10:10:14::1", 128)
                 .addRoute("0.0.0.0", 0).addRoute("::", 0)
@@ -174,10 +174,10 @@ class TomVpnService : VpnService() {
             Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         fun act(a: String, code: Int) = PendingIntent.getService(this, code,
-            Intent(this, TomVpnService::class.java).setAction(a),
+            Intent(this, JephVpnService::class.java).setAction(a),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val b = Notification.Builder(this, "vpn")
-            .setContentTitle(if (connected) "TOM_TUNNEL · Connecté" else "TOM_TUNNEL · Connexion…")
+            .setContentTitle(if (connected) "VPN connecté" else "Connexion en cours…")
             .setContentText(name)
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setOngoing(true).setOnlyAlertOnce(true).setShowWhen(false)
@@ -197,9 +197,8 @@ class TomVpnService : VpnService() {
 
     private fun goForeground(s: JSONObject?, connected: Boolean) {
         val nm = getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel("vpn", "TOM_TUNNEL VPN", NotificationManager.IMPORTANCE_LOW))
+        nm.createNotificationChannel(NotificationChannel("vpn", "VPN", NotificationManager.IMPORTANCE_LOW))
         val n = buildNotif(s, connected)
         if (Build.VERSION.SDK_INT >= 34) startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE) else startForeground(1, n)
     }
 }
-
