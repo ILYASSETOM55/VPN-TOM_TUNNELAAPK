@@ -51,21 +51,23 @@ jobs:
       - name: Configure Android SDK
         run: |
           set -eux
-          echo ANDROID_HOME=/usr/local/lib/android/sdk >> $GITHUB_ENV
-          echo ANDROID_SDK_ROOT=/usr/local/lib/android/sdk >> $GITHUB_ENV
-          echo /usr/local/lib/android/sdk/cmdline-tools/latest/bin >> $GITHUB_PATH
-          echo /usr/local/lib/android/sdk/platform-tools >> $GITHUB_PATH
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "/usr/local/lib/android/sdk/platform-tools" >> "$GITHUB_PATH"
           export ANDROID_HOME=/usr/local/lib/android/sdk
-          mkdir -p $ANDROID_HOME/licenses
-          echo 24333f8a63b6825ea9c5514f83c2829b004d1fee > $ANDROID_HOME/licenses/android-sdk-license
-          echo 84831b9409646a918e30573bab4c9c91346d8abd > $ANDROID_HOME/licenses/android-sdk-preview-license
-          SDKM=$(find $ANDROID_HOME/cmdline-tools -name sdkmanager -type f 2>/dev/null | head -1 || true)
+          mkdir -p "$ANDROID_HOME/licenses"
+          printf '24333f8a63b6825ea9c5514f83c2829b004d1fee\n' > "$ANDROID_HOME/licenses/android-sdk-license"
+          printf '84831b9409646a918e30573bab4c9c91346d8abd\n' > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+          SDKM=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -1 || true)
           if [ -n "$SDKM" ]; then
-            yes | $SDKM --sdk_root=$ANDROID_HOME --licenses >/dev/null 2>&1 || true
-            $SDKM --sdk_root=$ANDROID_HOME --install platforms;android-34 build-tools;34.0.0 platform-tools || true
+            yes | "$SDKM" --sdk_root="$ANDROID_HOME" --licenses >/dev/null 2>&1 || true
+            "$SDKM" --sdk_root="$ANDROID_HOME" --install "platforms;android-34" "build-tools;34.0.0" "platform-tools" || true
           fi
-          echo sdk.dir=$ANDROID_HOME > local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
           cat local.properties
+          ls "$ANDROID_HOME/platforms" || true
+          ls "$ANDROID_HOME/build-tools" || true
 
       - name: Install Go
         uses: actions/setup-go@v5
@@ -77,19 +79,16 @@ jobs:
           set -eux
           mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64 /tmp/engines
 
-          # hev AAR
           curl -fL --retry 5 -o app/libs/hev-socks5-tunnel.aar \
             https://github.com/heiher/hev-socks5-tunnel/releases/download/2.19.1/hev-socks5-tunnel.aar
           ls -lh app/libs/hev-socks5-tunnel.aar
 
-          # Xray arm64
           curl -fL --retry 5 -o /tmp/engines/xray-arm64.zip \
             https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-arm64-v8a.zip
           unzip -p /tmp/engines/xray-arm64.zip xray > app/src/main/jniLibs/arm64-v8a/libxray.so
           chmod 755 app/src/main/jniLibs/arm64-v8a/libxray.so
           ls -lh app/src/main/jniLibs/arm64-v8a/libxray.so
 
-          # Xray x86_64
           curl -fL --retry 5 -o /tmp/engines/xray-amd64.zip \
             https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-amd64.zip
           unzip -p /tmp/engines/xray-amd64.zip xray > app/src/main/jniLibs/x86_64/libxray.so
