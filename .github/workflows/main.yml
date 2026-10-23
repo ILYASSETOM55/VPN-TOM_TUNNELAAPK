@@ -21,7 +21,7 @@ jobs:
 
       - name: Fix project structure
         run: |
-          set -euxo pipefail
+          set -eux
           if [ -f "build.gradle (1).kts" ] && [ ! -f build.gradle.kts ]; then
             mv "build.gradle (1).kts" build.gradle.kts
           fi
@@ -30,28 +30,19 @@ jobs:
             mv app/main app/src/main
           fi
           mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64
-          if [ -f settings.gradle.kts ] && ! grep -q "jitpack.io" settings.gradle.kts; then
-            cat > settings.gradle.kts << 'SEOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-                  maven { url = uri("https://jitpack.io") }
-              }
-          }
-          rootProject.name = "TOM_TUNNEL"
-          include(":app")
-          SEOF
+          if [ -f settings.gradle.kts ] && ! grep -q jitpack.io settings.gradle.kts; then
+            printf '%s\n' \
+              'pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }' \
+              'dependencyResolutionManagement {' \
+              '  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)' \
+              '  repositories { google(); mavenCentral(); maven { url = uri("https://jitpack.io") } }' \
+              '}' \
+              'rootProject.name = "TOM_TUNNEL"' \
+              'include(":app")' > settings.gradle.kts
           fi
           echo "Structure OK"
+          ls -la app/
+          ls -la app/src/main/ || true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -59,56 +50,46 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Install Android SDK
+      - name: Configure Android SDK
         run: |
-          set -euxo pipefail
+          set -eux
+          # SDK préinstallé sur ubuntu-latest
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "/usr/local/lib/android/sdk/platform-tools" >> "$GITHUB_PATH"
 
-          ANDROID_ROOT="$HOME/android-sdk"
-          mkdir -p "$ANDROID_ROOT"
-          cd /tmp
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 
-          curl -fsSL -o cmdtools.zip \
-            https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          # Trouver sdkmanager
+          SDKM=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -1)
+          if [ -z "$SDKM" ]; then
+            SDKM=$(find /usr/local/lib/android -name sdkmanager -type f 2>/dev/null | head -1)
+          fi
+          echo "sdkmanager = $SDKM"
+          ls -la "$ANDROID_HOME" || true
 
-          rm -rf cmdtools-extract
-          mkdir cmdtools-extract
-          unzip -q cmdtools.zip -d cmdtools-extract
+          # Licences
+          mkdir -p "$ANDROID_HOME/licenses"
+          echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
+          echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+          echo -e "d56f5187479451eabf01fb78af6dfcb131a6481e\n" > "$ANDROID_HOME/licenses/android-googletv-license"
+          echo -e "601085b94cd77f0b54ff86406957099ebe79c4d6\n" > "$ANDROID_HOME/licenses/android-googletv-license" 2>/dev/null || true
+          echo -e "33b6a2b64607f11b759f320ef9dff4ae8c87d171\n" > "$ANDROID_HOME/licenses/google-gdk-license"
+          echo -e "e9acab5b5f89150eabd09dcb5f27da8b27c9ed40\n" > "$ANDROID_HOME/licenses/intel-android-extra-license"
+          echo -e "d975f751698a77b662f1254ddbeed3901e976f5a\n" > "$ANDROID_HOME/licenses/mips-android-sysimage-license"
 
-          # Le zip contient un dossier "cmdline-tools"
-          ls -la cmdtools-extract
-          mkdir -p "$ANDROID_ROOT/cmdline-tools"
-          if [ -d cmdtools-extract/cmdline-tools ]; then
-            mv cmdtools-extract/cmdline-tools "$ANDROID_ROOT/cmdline-tools/latest"
-          else
-            # fallback si la structure change
-            mv cmdtools-extract/* "$ANDROID_ROOT/cmdline-tools/latest" 2>/dev/null || \
-            mv cmdtools-extract "$ANDROID_ROOT/cmdline-tools/latest"
+          if [ -n "$SDKM" ]; then
+            yes | "$SDKM" --sdk_root="$ANDROID_HOME" --licenses >/dev/null 2>&1 || true
+            "$SDKM" --sdk_root="$ANDROID_HOME" --install "platforms;android-34" "build-tools;34.0.0" "platform-tools" || true
           fi
 
-          export ANDROID_HOME="$ANDROID_ROOT"
-          export ANDROID_SDK_ROOT="$ANDROID_ROOT"
-          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
-
-          echo "Contenu cmdline-tools/latest :"
-          ls -la "$ANDROID_HOME/cmdline-tools/latest"
-          which sdkmanager || ls "$ANDROID_HOME/cmdline-tools/latest/bin"
-
-          yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
-
-          sdkmanager --sdk_root="$ANDROID_HOME" --install \
-            "platform-tools" \
-            "platforms;android-34" \
-            "build-tools;34.0.0"
-
-          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
-          echo "$ANDROID_HOME/build-tools/34.0.0" >> "$GITHUB_PATH"
-
-          echo "SDK OK"
-          ls "$ANDROID_HOME/platforms"
-          ls "$ANDROID_HOME/build-tools"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          cat local.properties
+          ls "$ANDROID_HOME/platforms" || true
+          ls "$ANDROID_HOME/build-tools" || true
 
       - name: Install Go
         uses: actions/setup-go@v5
@@ -122,11 +103,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Create local.properties
-        run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          cat local.properties
 
       - name: Build debug APK
         run: |
