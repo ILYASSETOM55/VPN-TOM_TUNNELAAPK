@@ -59,38 +59,56 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Install Android SDK (manual)
+      - name: Install Android SDK
         run: |
           set -euxo pipefail
-          ANDROID_ROOT="${HOME}/android-sdk"
-          mkdir -p "${ANDROID_ROOT}/cmdline-tools"
-          curl -fsSL -o /tmp/cmdtools.zip \
+
+          ANDROID_ROOT="$HOME/android-sdk"
+          mkdir -p "$ANDROID_ROOT"
+          cd /tmp
+
+          curl -fsSL -o cmdtools.zip \
             https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q /tmp/cmdtools.zip -d "${ANDROID_ROOT}/cmdline-tools"
-          mv "\( {ANDROID_ROOT}/cmdline-tools/cmdline-tools" " \){ANDROID_ROOT}/cmdline-tools/latest"
-          rm -f /tmp/cmdtools.zip
 
-          export ANDROID_HOME="${ANDROID_ROOT}"
-          export ANDROID_SDK_ROOT="${ANDROID_ROOT}"
-          export PATH="\( {PATH}: \){ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+          rm -rf cmdtools-extract
+          mkdir cmdtools-extract
+          unzip -q cmdtools.zip -d cmdtools-extract
 
-          # Accepter toutes les licences sans interaction
-          yes | sdkmanager --licenses >/dev/null || true
+          # Le zip contient un dossier "cmdline-tools"
+          ls -la cmdtools-extract
+          mkdir -p "$ANDROID_ROOT/cmdline-tools"
+          if [ -d cmdtools-extract/cmdline-tools ]; then
+            mv cmdtools-extract/cmdline-tools "$ANDROID_ROOT/cmdline-tools/latest"
+          else
+            # fallback si la structure change
+            mv cmdtools-extract/* "$ANDROID_ROOT/cmdline-tools/latest" 2>/dev/null || \
+            mv cmdtools-extract "$ANDROID_ROOT/cmdline-tools/latest"
+          fi
 
-          sdkmanager --install \
+          export ANDROID_HOME="$ANDROID_ROOT"
+          export ANDROID_SDK_ROOT="$ANDROID_ROOT"
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+
+          echo "Contenu cmdline-tools/latest :"
+          ls -la "$ANDROID_HOME/cmdline-tools/latest"
+          which sdkmanager || ls "$ANDROID_HOME/cmdline-tools/latest/bin"
+
+          yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
+
+          sdkmanager --sdk_root="$ANDROID_HOME" --install \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0"
 
-          echo "ANDROID_HOME=${ANDROID_HOME}" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> "$GITHUB_ENV"
-          echo "${ANDROID_HOME}/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "${ANDROID_HOME}/platform-tools" >> "$GITHUB_PATH"
-          echo "${ANDROID_HOME}/build-tools/34.0.0" >> "$GITHUB_PATH"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
+          echo "$ANDROID_HOME/build-tools/34.0.0" >> "$GITHUB_PATH"
 
-          echo "SDK installé :"
-          ls "${ANDROID_HOME}/platforms"
-          ls "${ANDROID_HOME}/build-tools"
+          echo "SDK OK"
+          ls "$ANDROID_HOME/platforms"
+          ls "$ANDROID_HOME/build-tools"
 
       - name: Install Go
         uses: actions/setup-go@v5
@@ -107,7 +125,7 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
           cat local.properties
 
       - name: Build debug APK
