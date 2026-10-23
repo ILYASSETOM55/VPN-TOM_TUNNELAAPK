@@ -40,7 +40,7 @@ jobs:
               'rootProject.name = "TOM_TUNNEL"' \
               'include(":app")' > settings.gradle.kts
           fi
-          echo "Structure OK"
+          echo Structure OK
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -51,20 +51,20 @@ jobs:
       - name: Configure Android SDK
         run: |
           set -eux
-          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
-          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          echo "/usr/local/lib/android/sdk/platform-tools" >> "$GITHUB_PATH"
+          echo ANDROID_HOME=/usr/local/lib/android/sdk >> $GITHUB_ENV
+          echo ANDROID_SDK_ROOT=/usr/local/lib/android/sdk >> $GITHUB_ENV
+          echo /usr/local/lib/android/sdk/cmdline-tools/latest/bin >> $GITHUB_PATH
+          echo /usr/local/lib/android/sdk/platform-tools >> $GITHUB_PATH
           export ANDROID_HOME=/usr/local/lib/android/sdk
-          mkdir -p "$ANDROID_HOME/licenses"
-          echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
-          echo -e "84831b9409646a918e30573bab4c9c91346d8abd\n" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-          SDKM=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -1 || true)
+          mkdir -p $ANDROID_HOME/licenses
+          echo 24333f8a63b6825ea9c5514f83c2829b004d1fee > $ANDROID_HOME/licenses/android-sdk-license
+          echo 84831b9409646a918e30573bab4c9c91346d8abd > $ANDROID_HOME/licenses/android-sdk-preview-license
+          SDKM=$(find $ANDROID_HOME/cmdline-tools -name sdkmanager -type f 2>/dev/null | head -1 || true)
           if [ -n "$SDKM" ]; then
-            yes | "$SDKM" --sdk_root="$ANDROID_HOME" --licenses >/dev/null 2>&1 || true
-            "$SDKM" --sdk_root="$ANDROID_HOME" --install "platforms;android-34" "build-tools;34.0.0" "platform-tools" || true
+            yes | $SDKM --sdk_root=$ANDROID_HOME --licenses >/dev/null 2>&1 || true
+            $SDKM --sdk_root=$ANDROID_HOME --install platforms;android-34 build-tools;34.0.0 platform-tools || true
           fi
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo sdk.dir=$ANDROID_HOME > local.properties
           cat local.properties
 
       - name: Install Go
@@ -75,63 +75,30 @@ jobs:
       - name: Bootstrap native engines
         run: |
           set -eux
-          LIBS=app/libs
-          JNI=app/src/main/jniLibs
-          mkdir -p "$LIBS" "$JNI/arm64-v8a" "$JNI/x86_64"
-          TMP=/tmp/tomtunnel-engines
-          mkdir -p "$TMP"
+          mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64 /tmp/engines
 
-          # hev AAR (version existante)
-          HEV=2.19.1
-          if [ ! -s "$LIBS/hev-socks5-tunnel.aar" ]; then
-            curl -fL --retry 5 -o "$LIBS/hev-socks5-tunnel.aar" \
-              "https://github.com/heiher/hev-socks5-tunnel/releases/download/${HEV}/hev-socks5-tunnel.aar"
-          fi
-          ls -lh "$LIBS/hev-socks5-tunnel.aar"
+          # hev AAR
+          curl -fL --retry 5 -o app/libs/hev-socks5-tunnel.aar \
+            https://github.com/heiher/hev-socks5-tunnel/releases/download/2.19.1/hev-socks5-tunnel.aar
+          ls -lh app/libs/hev-socks5-tunnel.aar
 
-          # Xray (v26.9.8 a été supprimé → v26.10.21)
-          XRAY=26.10.21
-          fetch_xray() {
-            abi="$1"
-            file="$2"
-            out="$JNI/$abi/libxray.so"
-            if [ -s "$out" ]; then echo "Xray $abi OK"; return; fi
-            zip="$TMP/$file.zip"
-            curl -fL --retry 5 -o "$zip" \
-              "https://github.com/XTLS/Xray-core/releases/download/v\( {XRAY}/ \){file}.zip"
-            unzip -p "$zip" xray > "$out"
-            chmod 755 "$out"
-            ls -lh "$out"
-          }
-          fetch_xray arm64-v8a Xray-android-arm64-v8a
-          fetch_xray x86_64 Xray-android-amd64
+          # Xray arm64
+          curl -fL --retry 5 -o /tmp/engines/xray-arm64.zip \
+            https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-arm64-v8a.zip
+          unzip -p /tmp/engines/xray-arm64.zip xray > app/src/main/jniLibs/arm64-v8a/libxray.so
+          chmod 755 app/src/main/jniLibs/arm64-v8a/libxray.so
+          ls -lh app/src/main/jniLibs/arm64-v8a/libxray.so
 
-          # DNSTT (optionnel — si échec on continue)
-          set +e
-          SRC="$TMP/dnstt"
-          if [ ! -d "$SRC/.git" ]; then
-            git clone --depth 1 https://github.com/dnstt-xyz/dnstt_xyz_app.git "$SRC" 2>/dev/null || true
-          fi
-          if [ -d "$SRC" ]; then
-            CLIENT=$(find "$SRC" -type d -name dnstt-client 2>/dev/null | head -1)
-            MOD=$(find "$SRC" -name go.mod 2>/dev/null | head -1 | xargs dirname 2>/dev/null)
-            if [ -n "$CLIENT" ] && [ -n "$MOD" ]; then
-              REL=${CLIENT#"\( MOD"}; REL= \){REL#/}; PKG="./${REL}"; [ -n "$REL" ] || PKG="."
-              for pair in "arm64:arm64-v8a" "amd64:x86_64"; do
-                goarch=\( {pair%%:*}; abi= \){pair##*:}
-                out="$JNI/$abi/libdnstt.so"
-                [ -s "$out" ] && continue
-                (cd "$MOD" && GOOS=linux GOARCH="$goarch" CGO_ENABLED=0 \
-                  go build -trimpath -ldflags='-s -w' -o "$out" "$PKG") || true
-                [ -f "$out" ] && chmod 755 "$out"
-              done
-            fi
-          fi
-          set -e
+          # Xray x86_64
+          curl -fL --retry 5 -o /tmp/engines/xray-amd64.zip \
+            https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-amd64.zip
+          unzip -p /tmp/engines/xray-amd64.zip xray > app/src/main/jniLibs/x86_64/libxray.so
+          chmod 755 app/src/main/jniLibs/x86_64/libxray.so
+          ls -lh app/src/main/jniLibs/x86_64/libxray.so
 
-          echo "Engines prêts :"
-          find "$JNI" -type f -printf '  %p (%s bytes)\n' | sort
-          ls -lh "$LIBS"
+          echo Engines OK
+          find app/src/main/jniLibs -type f
+          ls -lh app/libs
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -146,9 +113,9 @@ jobs:
 
       - name: Verify APK
         run: |
-          APK="app/build/outputs/apk/debug/app-debug.apk"
+          APK=app/build/outputs/apk/debug/app-debug.apk
           if [ ! -s "$APK" ]; then
-            echo "::error::APK introuvable"
+            echo APK introuvable
             find app/build/outputs -type f -name '*.apk' 2>/dev/null || true
             exit 1
           fi
