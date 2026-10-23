@@ -68,7 +68,7 @@ class SlowDnsEngine : Engine {
         }
 
         socks = ServerSocket(Engine.SOCKS_PORT, 64, InetAddress.getByName("127.0.0.1"))
-        thread(isDaemon = true, name = "TomSlowDnsSocks") {
+        thread(isDaemon = true, name = "JephSlowDnsSocks") {
             while (socks?.isClosed == false) {
                 val c = try { socks!!.accept() } catch (_: Throwable) { break }
                 thread(isDaemon = true) { handle(c, ssh!!) }
