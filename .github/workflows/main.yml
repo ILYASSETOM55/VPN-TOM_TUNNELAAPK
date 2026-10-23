@@ -22,51 +22,73 @@ jobs:
       - name: Fix project structure
         run: |
           set -eux
+
+          # 1) Renommer build.gradle mal nommé
           if [ -f "build.gradle (1).kts" ] && [ ! -f build.gradle.kts ]; then
             mv "build.gradle (1).kts" build.gradle.kts
           fi
+
+          # 2) app/main -> app/src/main
           if [ -d app/main ] && [ ! -d app/src/main ]; then
             mkdir -p app/src
             mv app/main app/src/main
           fi
           mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64
 
-          if [ -f settings.gradle.kts ] && ! grep -q jitpack.io settings.gradle.kts; then
-            printf '%s\n' \
-              'pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }' \
-              'dependencyResolutionManagement {' \
-              '  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)' \
-              '  repositories { google(); mavenCentral(); maven { url = uri("https://jitpack.io") } }' \
-              '}' \
-              'rootProject.name = "TOM_TUNNEL"' \
-              'include(":app")' > settings.gradle.kts
-          fi
+          # 3) settings.gradle.kts avec JitPack
+          cat > settings.gradle.kts << 'SEOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+                  maven { url = uri("https://jitpack.io") }
+              }
+          }
+          rootProject.name = "TOM_TUNNEL"
+          include(":app")
+          SEOF
 
-          # minSdk 29 (exigé par hev-socks5-tunnel.aar)
+          # 4) gradle.properties SANS espaces en début de ligne
+          printf '%s\n' \
+            'org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8' \
+            'android.useAndroidX=true' \
+            'android.enableJetifier=true' \
+            'kotlin.code.style=official' \
+            'android.nonTransitiveRClass=true' > gradle.properties
+          cat gradle.properties
+
+          # 5) minSdk = 29
           if [ -f app/build.gradle.kts ]; then
             sed -i 's/minSdk\s*=\s*[0-9]*/minSdk = 29/' app/build.gradle.kts
-            sed -i 's/minSdkVersion\s*[0-9]*/minSdkVersion 29/' app/build.gradle.kts || true
-          fi
-          if [ -f app/build.gradle ]; then
-            sed -i 's/minSdkVersion\s*[0-9]*/minSdkVersion 29/' app/build.gradle
+            grep -n minSdk app/build.gradle.kts || true
           fi
 
-          # extractNativeLibs
+          # 6) extractNativeLibs
           if [ -f app/src/main/AndroidManifest.xml ]; then
             sed -i 's/android:extractNativeLibs="false"/android:extractNativeLibs="true"/' app/src/main/AndroidManifest.xml || true
           fi
 
-          # AndroidX obligatoire
-          cat > gradle.properties << 'EOF'
-          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          android.useAndroidX=true
-          android.enableJetifier=true
-          kotlin.code.style=official
-          android.nonTransitiveRClass=true
-          EOF
-          cat gradle.properties
+          # 7) Ressources minimales si absentes
+          mkdir -p app/src/main/res/values
+          if [ ! -f app/src/main/res/values/strings.xml ]; then
+            printf '%s\n' \
+              '<?xml version="1.0" encoding="utf-8"?>' \
+              '<resources>' \
+              '    <string name="app_name">TOM_TUNNEL</string>' \
+              '</resources>' > app/src/main/res/values/strings.xml
+          fi
 
-          echo Structure OK
+          echo "=== Structure ==="
+          find app -maxdepth 4 -type d | head -40
+          ls -la
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -125,17 +147,18 @@ jobs:
 
       - name: Build debug APK
         run: |
-          if [ -x ./gradlew ]; then
-            ./gradlew --no-daemon --stacktrace :app:assembleDebug
-          else
-            gradle --no-daemon --stacktrace :app:assembleDebug
+          set -eux
+          # Générer le wrapper si absent
+          if [ ! -x ./gradlew ]; then
+            gradle wrapper --gradle-version 8.7
           fi
+          ./gradlew --no-daemon --stacktrace :app:assembleDebug
 
       - name: Verify APK
         run: |
           APK=app/build/outputs/apk/debug/app-debug.apk
           if [ ! -s "$APK" ]; then
-            echo APK introuvable
+            echo "APK introuvable"
             find app/build/outputs -type f -name '*.apk' 2>/dev/null || true
             exit 1
           fi
