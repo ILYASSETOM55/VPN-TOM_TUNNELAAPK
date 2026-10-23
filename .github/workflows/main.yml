@@ -42,20 +42,29 @@ jobs:
               'include(":app")' > settings.gradle.kts
           fi
 
-          # Forcer minSdk = 29 (exigé par hev-socks5-tunnel.aar)
+          # minSdk 29 (exigé par hev-socks5-tunnel.aar)
           if [ -f app/build.gradle.kts ]; then
             sed -i 's/minSdk\s*=\s*[0-9]*/minSdk = 29/' app/build.gradle.kts
             sed -i 's/minSdkVersion\s*[0-9]*/minSdkVersion 29/' app/build.gradle.kts || true
-            grep -n "minSdk" app/build.gradle.kts || true
           fi
           if [ -f app/build.gradle ]; then
             sed -i 's/minSdkVersion\s*[0-9]*/minSdkVersion 29/' app/build.gradle
           fi
 
-          # Corriger extractNativeLibs si présent
+          # extractNativeLibs
           if [ -f app/src/main/AndroidManifest.xml ]; then
             sed -i 's/android:extractNativeLibs="false"/android:extractNativeLibs="true"/' app/src/main/AndroidManifest.xml || true
           fi
+
+          # AndroidX obligatoire
+          cat > gradle.properties << 'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.enableJetifier=true
+          kotlin.code.style=official
+          android.nonTransitiveRClass=true
+          EOF
+          cat gradle.properties
 
           echo Structure OK
 
@@ -96,7 +105,6 @@ jobs:
 
           curl -fL --retry 5 -o app/libs/hev-socks5-tunnel.aar \
             https://github.com/heiher/hev-socks5-tunnel/releases/download/2.19.1/hev-socks5-tunnel.aar
-          ls -lh app/libs/hev-socks5-tunnel.aar
 
           curl -fL --retry 5 -o /tmp/engines/xray-arm64.zip \
             https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-arm64-v8a.zip
