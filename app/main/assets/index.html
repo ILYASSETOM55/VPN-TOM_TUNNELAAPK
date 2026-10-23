@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TOM_TUNNEL</title>
+<title>TOM TUNNEL</title>
 <style>
 :root{
   box-sizing:border-box;
@@ -11,9 +11,9 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
   --bg:#FFFFFF;--bg2:#F4F5F7;--card:#FFFFFF;--line:#E6E8EC;--tx:#12202F;--mut:#66727F;
   --desk:#E9ECF0;
-  --blue:#0B2A5B;--brand-j:#0B1F3A;--brand-t:#00C2A8;
-  --red:#EF2B2D;--yel:#FCD116;--grn:#00A896;
-  --acc:#00A896;--on-acc:#FFFFFF;
+  --blue:#0B2A5B;--brand-j:#14181C;--brand-t:#0A8A43;
+  --red:#EF2B2D;--yel:#FCD116;--grn:#0A9B4A;
+  --acc:#0A9B4A;--on-acc:#FFFFFF;
   --acc-ink:color-mix(in srgb,var(--acc) 80%,black);
   --acc-soft:color-mix(in srgb,var(--acc) 11%,transparent);
   --r1:#EF2B2D;--r2:#FCD116;--r3:#0A9B4A;
@@ -23,7 +23,7 @@
 :root[data-accent="blanc"]{--bg:#F8FAFC;--bg2:#EEF1F5;--brand-j:#14213D;--shadow:0 1px 2px rgba(18,32,47,.03),0 10px 30px rgba(18,32,47,.07)}
 :root[data-theme="dark"]{
   --bg:#0E141B;--bg2:#17202A;--card:#131B24;--line:#232F3B;--tx:#EAF0F6;--mut:#93A1B0;--desk:#070B10;
-  --brand-j:#7EB8FF;--brand-t:#2EE6C5;
+  --brand-j:#9DB9EE;--brand-t:#3DD68C;
   --acc-ink:color-mix(in srgb,var(--acc) 70%,white);
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
   --err-bg:#2B1618;--err-tx:#FF9EA0;
@@ -71,15 +71,6 @@ button:active{transform:scale(.985)}
 .shake{animation:shake .4s}
 @keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 
-/* Carte IP compacte */
-.ip-card{display:flex;align-items:center;gap:10px;margin:14px 0 2px;padding:12px 14px;border:1px solid var(--ip-border,var(--line));border-radius:16px;background:var(--ip-bg,var(--bg2));min-width:0;transition:border-color .2s,background .2s}
-.ip-card.good{--ip-border:#0A9B67;--ip-bg:rgba(10,155,103,.13);--ip-color:#35D99A}
-.ip-card.bad{--ip-border:#E34C55;--ip-bg:rgba(227,76,85,.11);--ip-color:#FF737B}
-.ip-card.wait{--ip-border:var(--line);--ip-bg:var(--bg2);--ip-color:var(--mut)}
-.ip-mark{width:8px;height:8px;flex:none;border-radius:50%;background:var(--ip-color,var(--mut));box-shadow:0 0 0 4px color-mix(in srgb,var(--ip-color,var(--mut)) 16%,transparent)}
-.ip-info{min-width:0;flex:1}.ip-label{font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--mut);margin-bottom:3px}.ip-value{font-size:18px;font-weight:800;letter-spacing:-.3px;color:var(--ip-color,var(--tx));overflow-wrap:anywhere;line-height:1.25}
-.ip-sub{font-size:11.5px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ip-sub:empty{display:none}
-.ip-copy{border:0;background:transparent;color:var(--ip-color,var(--mut));padding:5px;display:grid;place-items:center;flex:none}
 
 
 /* Actions de partage : icônes mieux mises en valeur sans agrandir la feuille */
@@ -280,7 +271,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 :root[data-accent="noir"] .card::before,:root[data-accent="noir"] .srv::before,:root[data-accent="noir"] .chip::before{background:linear-gradient(90deg,#303640,#AEB7C2)!important}
 :root[data-accent="noir"] .ring{background:conic-gradient(#424A55,#BFC5CD,#424A55)!important}
 /* Burkina clair : couleurs nationales sur fond clair */
-:root[data-accent="burkina-clair"]{--bg:#F8FAFC;--bg2:#EEF1F5;--card:#FFFFFF;--line:#DDE3EA;--tx:#17202A;--mut:#657181;--desk:#E9EDF2;--brand-j:#14213D;--brand-t:#0A9B4A;--acc:#00A896;--acc-ink:#087A3B;--acc-soft:rgba(10,155,74,.09);--err-bg:#FDEEEE;--err-tx:#9B1C1F}
+:root[data-accent="burkina-clair"]{--bg:#F8FAFC;--bg2:#EEF1F5;--card:#FFFFFF;--line:#DDE3EA;--tx:#17202A;--mut:#657181;--desk:#E9EDF2;--brand-j:#14213D;--brand-t:#0A9B4A;--acc:#0A9B4A;--acc-ink:#087A3B;--acc-soft:rgba(10,155,74,.09);--err-bg:#FDEEEE;--err-tx:#9B1C1F}
 :root[data-accent="burkina-clair"] .device{background:linear-gradient(180deg,#FBFCFD,#F2F5F8)}
 
 /* mini-aperçus de la page Thème */
@@ -392,13 +383,6 @@ body{background:var(--desk)}
 
 :root[data-accent="burkina"] #main.home .top{padding-right:46px}
 :root[data-accent="burkina"] #main.home .ib.gear{top:-45px;right:0;width:38px;height:38px}
-/* carte IP */
-:root[data-accent="burkina"] .ip-card{border-radius:14px;padding:14px 16px;margin:16px 0 4px}
-:root[data-accent="burkina"] .ip-card.good,:root[data-accent="burkina"] .ip-card.wait.fresh{--ip-border:var(--ok);--ip-color:var(--ok)}
-:root[data-accent="burkina"] .ip-card.good{--ip-bg:color-mix(in srgb,var(--ok) 13%,var(--bg))}
-:root[data-accent="burkina"] .ip-mark{display:none}
-:root[data-accent="burkina"] .ip-label{font-size:12px;letter-spacing:.4px;margin-bottom:4px;color:var(--ip-color,var(--mut))}
-:root[data-accent="burkina"] .ip-value{font-size:22px;font-weight:800;letter-spacing:-.4px}
 
 /* bouton principal : anneau orange, icône discrète */
 :root[data-accent="burkina"] .ring{background:var(--acc);opacity:1;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))}
@@ -466,9 +450,6 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 :root[data-accent="burkina"] #main.home .wm{font-size:18px}
 :root[data-accent="burkina"] #main.home .chip{padding:7px 8px 7px 12px;flex:1 1 0;max-width:none}
 :root[data-accent="burkina"] #main.home .chip .a,:root[data-accent="burkina"] #main.home .chip .b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-:root[data-accent="burkina"] #main.home .ip-card{margin:0;padding:10px 14px;gap:8px}
-:root[data-accent="burkina"] #main.home .ip-label{font-size:11px;margin-bottom:2px}
-:root[data-accent="burkina"] #main.home .ip-value{font-size:19px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 :root[data-accent="burkina"] #main.home .ringwrap{flex:1 1 0;min-height:104px;max-height:226px;aspect-ratio:1/1;width:auto;align-self:center;margin:0}
 :root[data-accent="burkina"] #main.home .pwr{width:84%;height:84%}
 :root[data-accent="burkina"] #main.home .pwr svg{width:32px;height:32px}
@@ -521,8 +502,6 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 /* éléments autour : plus lisibles */
 :root[data-accent="burkina"] #main.home .state h2{font-size:27px}
 :root[data-accent="burkina"] #main.home .state p{font-size:14px}
-:root[data-accent="burkina"] #main.home .ip-value{font-size:21px}
-:root[data-accent="burkina"] #main.home .ip-label{font-size:12px}
 :root[data-accent="burkina"] #main.home .card.tap{padding:11px 14px}
 :root[data-accent="burkina"] #main.home .card.tap .big{font-size:18px}
 :root[data-accent="burkina"] #main.home .card.tap .lbl{font-size:12px}
@@ -554,11 +533,21 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 @keyframes spIn{from{opacity:0;transform:translate(-50%,-42%) scale(1.3)}to{opacity:1;transform:translate(-50%,-50%) scale(2)}}
 html.booting .brand{visibility:hidden}
 .act:disabled{opacity:.4;pointer-events:none}
+/* ===== TOM TUNNEL : composants ajoutés ===== */
+.lg span{white-space:pre-line}
+.exp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;line-height:1.3;border:1px solid transparent}
+.exp.ok{color:#0A9B67;background:rgba(10,155,103,.12);border-color:rgba(10,155,103,.35)}
+.exp.warn{color:#E08A00;background:rgba(255,138,0,.13);border-color:rgba(255,138,0,.4)}
+.exp.bad{color:#E34C55;background:rgba(227,76,85,.12);border-color:rgba(227,76,85,.4)}
+.exp svg{flex:none}
+.keybox{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;word-break:break-all;background:var(--bg2);border:1px dashed var(--acc);border-radius:14px;padding:14px;max-height:180px;overflow:auto;-webkit-user-select:text;user-select:text;margin:4px 0 14px}
+.card.list .row+.row{border-top:1px solid var(--line)}
+textarea{min-height:84px}
 </style>
-<script>try{var _t=JSON.parse(localStorage.getItem("tt-theme3")||"null"),_m=_t&&_t.mode;if(_m!=="light"&&_m!=="dark")_m=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",_m)}catch(e){}</script>
+<script>try{var _t=JSON.parse(localStorage.getItem("jt-theme3")||"null"),_m=_t&&_t.mode;if(_m!=="light"&&_m!=="dark")_m=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",_m)}catch(e){}</script>
 </head>
 <body>
-<div id="splash"><div id="spBg"></div><div id="spBrand"><img src="img/logo.png" alt=""><div class="wm"><b>TOM</b><em>_TUNNEL</em><span class="tag">VPN • FAST • SECURE</span></div></div></div>
+<div id="splash"><div id="spBg"></div><div id="spBrand"><img src="img/logo.png" alt=""><div class="wm"><b>TOM</b><em>TUNNEL</em><span class="tag">VPN • RAPIDE • SÉCURISÉ</span></div></div></div>
 <script>setTimeout(function(){var s=document.getElementById("splash");if(s)s.remove();document.documentElement.classList.remove("booting")},4500)</script>
 <div class="stage">
 <div class="device" id="device">
@@ -567,7 +556,7 @@ html.booting .brand{visibility:hidden}
   <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
   <div class="layer" id="layer"></div>
   <div id="toast" role="status" aria-live="polite"></div>
-  <input type="file" id="fileIn" accept=".tom,.jeph,.json" class="hidden" onchange="fileChosen(this)">
+  <input type="file" id="fileIn" accept=".tom,.jeph,.txt" class="hidden" onchange="fileChosen(this)">
 </div>
 </div>
 
@@ -615,22 +604,24 @@ const I={
 };
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
 const LOGO='img/logo.png';
-const logo=(s=40)=>`<img src="${LOGO}" width="${s}" height="${s}" alt="Logo TOM_TUNNEL" style="display:block;border-radius:${Math.round(s*.24)}px">`;
+const logo=(s=40)=>`<img src="${LOGO}" width="${s}" height="${s}" alt="Logo TOM TUNNEL" style="display:block;border-radius:${Math.round(s*.24)}px">`;
 const SHIELD='img/shield.png';
 const logoHdr=()=>logo(38);
-const wordmark=()=>`<div class="wm"><b>TOM</b><em>_TUNNEL</em><span class="tag">VPN • FAST • SECURE</span></div>`;
+const wordmark=()=>`<div class="wm"><b>TOM</b><em>TUNNEL</em><span class="tag">VPN • RAPIDE • SÉCURISÉ</span></div>`;
 
 /* ---------- état ---------- */
-const AVATAR='img/avatar.jpg';
+const APP_VERSION='1.0.0';
+const CONTACT={telegram:'https://t.me/FREE_INTERNET237',whatsapp:'+237 654 145 540',whatsappUrl:'https://wa.me/237654145540'};
+const LANGS={fr:'Français',en:'English'};
 let S={
   servers:[],
   selected:null,status:'idle',startTs:0,dl:0,ul:0,dlR:0,ulR:0,ping:null,
   logs:[],tab:'home',page:null,stack:[],error:null,perm:false,
-  mode:'system',accent:'teal',boost:false,dns:'1.1.1.1',lang:'fr',tg:'https://t.me/FREE_INTERNET237',wa:'+237654145540',wa:'+237654145540',
+  mode:'system',accent:'burkina',boost:false,dns:'1.1.1.1',tg:CONTACT.telegram,lang:'fr',ws:null,
   draft:null,sd:null,clip:null,ex:null,del:null
 };
 let timer=null;
-const STATE_KEY='tt-state-v130';
+const STATE_KEY='jt-state-v121';
 function persistState(){
   try{
     const payload={servers:S.servers,selected:S.selected,logs:S.logs,dns:S.dns,boost:!!S.boost};
@@ -644,7 +635,7 @@ function loadNativeState(raw){
     const o=JSON.parse(raw||'{}');
     if(Array.isArray(o.servers))S.servers=o.servers;
     if(o.selected!==null&&o.selected!==undefined)S.selected=o.selected;
-    if(Array.isArray(o.logs))S.logs=o.logs;
+    if(Array.isArray(o.logs))S.logs=o.logs.filter(l=>l.kind==='conn'||l.kind==='cerr');
     if(typeof o.dns==='string'&&o.dns.trim())S.dns=o.dns.trim();
     if(typeof o.boost==='boolean')S.boost=o.boost;
     if(S.selected!==null&&!S.servers.some(s=>s.id===S.selected))S.selected=S.servers[0]?.id||null;
@@ -661,14 +652,14 @@ const NATIVE=typeof window.JT!=='undefined';
 window.onVpn=(st,msg)=>{
   clearInterval(timer);timer=null;
   if(st==='connecting'){S.status='connecting';S.error=null;render();return}
-  if(st==='connected'){S.status='connected';S.startTs=Date.now();S.error=null;log('VPN connecté',curServer()?curServer().name:'');timer=setInterval(upd,1000);
+  if(st==='connected'){S.status='connected';S.startTs=Date.now();S.error=null;log('Connecté',curServer()?curServer().name:'','conn');timer=setInterval(upd,1000);
     /* Le code Android natif doit créer/mettre à jour la notification système. */
     try{if(NATIVE&&JT.updateVpnNotification)JT.updateVpnNotification(curServer()?curServer().name:'Serveur VPN','connecté')}catch(e){}
   }
   else{const was=S.status==='connected';S.status='idle';S.dlR=0;S.ulR=0;S.ping=null;
     try{if(NATIVE&&JT.hideVpnNotification)JT.hideVpnNotification()}catch(e){}
-    if(st==='error'){S.error={title:'Connexion impossible',msg:msg||'Erreur inconnue'};log('Erreur de connexion',msg||'','err')}
-    else if(was)log('VPN déconnecté','')}
+    if(st==='error'){S.error={title:'Connexion impossible',msg:shortMsg(msg)||'Erreur inconnue'};log('Échec de la connexion',shortMsg(msg),'cerr')}
+    else if(was)log('Déconnecté','','conn')}
   render()};
 /* Actions appelées par les boutons de la notification Android. */
 window.onNotificationAction=(action)=>{
@@ -683,7 +674,7 @@ window.onNotificationAction=(action)=>{
 window.onStats=(dl,ul,dlR,ulR,ping)=>{S.dl=dl;S.ul=ul;S.dlR=dlR;S.ulR=ulR;S.ping=ping<0?null:ping;upd()};
 const curServer=()=>S.servers.find(s=>s.id===S.selected)||null;
 
-const THEME_KEY='tt-theme3';
+const THEME_KEY='jt-theme3';
 const DARK_MQ=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
 function saveTheme(){try{localStorage.setItem(THEME_KEY,JSON.stringify({mode:S.mode}))}catch(e){}}
 function loadTheme(){
@@ -691,7 +682,7 @@ function loadTheme(){
   try{
     const t=JSON.parse(localStorage.getItem(THEME_KEY)||'null');
     if(t&&['light','dark','system'].includes(t.mode)){S.mode=t.mode;return}
-    const o=JSON.parse(localStorage.getItem('tt-theme2')||'null');
+    const o=JSON.parse(localStorage.getItem('jt-theme2')||'null');
     if(o&&['light','dark'].includes(o.mode))S.mode=o.mode;
   }catch(e){}
 }
@@ -707,13 +698,28 @@ function applyTheme(){
 if(DARK_MQ){const onSys=()=>{if(S.mode==='system')applyTheme()};DARK_MQ.addEventListener?DARK_MQ.addEventListener('change',onSys):DARK_MQ.addListener(onSys)}
 
 function toast(m,kind){const t=$('#toast');t.textContent=m;t.classList.remove('bad','good');if(kind)t.classList.add(kind);t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),kind==='bad'?4200:2600)}
+/* Le journal ne conserve que les événements de connexion (kind 'conn' / 'cerr'). */
 function log(title,sub,kind){
-  S.logs.unshift({t:hhmm(),title,sub:sub||'',kind:kind||'info'});
-  if(S.logs.length>200)S.logs.length=200;
+  if(kind!=='conn'&&kind!=='cerr')return;
+  S.logs.unshift({t:hhmm(),title,sub:sub||'',kind});
+  if(S.logs.length>100)S.logs.length=100;
   persistState();
   if(S.tab==='log'&&!S.page)render()
 }
-
+const shortMsg=m=>String(m||'').split('\n')[0].trim().slice(0,140);
+function connInfo(sv){
+  const L=['Configuration : '+(sv.name||'—')+' · '+sv.type];
+  if(sv.protected||sv.locked){L.push('Serveur : masqué (profil protégé)');return L.join('\n')}
+  const host=sv.addr||sv.host||'',port=sv.port||sv.sshPort||'';
+  L.push('Serveur : '+host+(port?':'+port:''));
+  let tp='';
+  if(sv.type==='SSH SlowDNS')tp='DNSTT · NS '+sv.ns+' · DNS '+(sv.resolver||'1.1.1.1');
+  else if(sv.type==='SSH WebSocket')tp=(sv.tls?'WSS (TLS)':'WS')+' · '+(sv.path||'/')+(sv.sni?' · SNI '+sv.sni:'');
+  else tp=[(sv.network||'tcp').toUpperCase(),(sv.security&&sv.security!=='none')?sv.security.toUpperCase():(sv.tls?'TLS':''),sv.sni?'SNI '+sv.sni:''].filter(Boolean).join(' · ');
+  if(tp)L.push('Transport : '+tp);
+  L.push('DNS : '+S.dns);
+  return L.join('\n');
+}
 /* ---------- nav ---------- */
 const TABS=[['home','Accueil','home'],['servers','Serveurs','server'],['log','Journal','clock'],['more','Plus','dots']];
 function renderNav(){
@@ -729,7 +735,6 @@ function render(){
   if(S.page){m.innerHTML=pageHTML()}
   else m.innerHTML=({home:homeHTML,servers:serversHTML,log:logHTML,more:moreHTML})[S.tab]();
   renderNav();
-  paintIp();
 }
 
 /* ---------- accueil ---------- */
@@ -743,7 +748,7 @@ function homeHTML(){
     ?`<div class="a">${esc(sv.name)}</div><div class="b">${esc(sv.type)}</div>`
     :`<div class="a">Choisir un serveur</div><div class="b">Sélectionnez un serveur</div>`;
   const card=sv
-    ?`<div class="lbl">Serveur sélectionné</div><div class="big">JOELTOM</div><div class="sub">${esc(sv.type)}</div>`
+    ?`<div class="lbl">Serveur sélectionné</div><div class="big">${esc(sv.name)}</div><div class="sub">${esc(sv.type)}</div>`
     :`<div class="lbl">Serveur sélectionné</div><div class="big">Aucun serveur sélectionné</div><div class="sub">Choisir un serveur</div>`;
   const err=S.error?`<div class="err" role="alert">${ic('alert',20)}<div><b>${esc(S.error.title)}</b><span>${esc(S.error.msg)}</span></div><button class="ib" onclick="S.error=null;render()" aria-label="Fermer">${ic('x',18)}</button></div>`:'';
   return `
@@ -753,7 +758,6 @@ function homeHTML(){
   </div>
   <div class="gearrow"><button class="ib gear" onclick="go('more')" aria-label="Plus de paramètres">${ic('gear',21)}</button></div>
   ${err}
-  <div class="ip-card wait" id="ipCard"><span class="ip-mark"></span><div class="ip-info"><div class="ip-label" id="ipLabel">IP DU RÉSEAU</div><div class="ip-value" id="ipValue">—</div><div class="ip-sub" id="ipSub"></div></div><button class="ip-copy" onclick="copyDetectedIp()" aria-label="Copier l’adresse IP">${ic('key',18)}</button></div>
   <div class="ringwrap ${st}"><div class="ring"></div><div class="halo"></div>
     <button class="pwr" onclick="toggleVpn()" aria-label="${esc(title)} – ${esc(hint)}">${ic('power',72)}</button></div>
   <div class="state ${st==='connected'?'ok':''}"><h2>${title}</h2><p>${hint}</p></div>
@@ -775,7 +779,7 @@ function homeHTML(){
     <div class="sep"></div>
     <div class="row2"><span class="ico">${ic('ping',18)}</span><span class="lbl grow">Ping</span><span class="clk" id="ping">${S.ping==null?'—':S.ping} ms</span></div>
   </div>
-  <div class="by">By JOELTOM</div>`;
+  <div class="by">BY JOELTOM</div>`;
 }
 function upd(){
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
@@ -788,67 +792,8 @@ function tick(){
 }
 function resetTraffic(){S.dl=0;S.ul=0;if(S.status!=='connected'){S.dlR=0;S.ulR=0}upd()}
 
-// La liste est comparée au deuxième octet de l’IPv4 : 10.xx.x.x.
-let detectedIp = '';
-let ipState = null; // dernier état reçu du natif : {net, local, vpn, pub}
-const NET_NAMES = {wifi:'Wi‑Fi', mobile:'Données mobiles', ethernet:'Ethernet', other:'Réseau'};
-/* Liste des bons préfixes : 10.<n>.x.x — seul le 2e octet est comparé. */
-const GOOD_10 = new Set([41,43,46,73,74,75,102,218,230,213,217,209,206,193,215,214,216,219,220,198,165,229,208,143,51,197,194,195,196,199,200,204,205,207,210,212,221,222,223,224,225,226,227,228]);
-/* 'good' = bon IP · 'bad' = mauvais IP (préfixe 10.x hors liste) · 'na' = autre IP (non vérifié, aucun blocage) */
-function ipVerdict(ip){
-  const m=/^10\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/.exec(String(ip||''));
-  if(!m)return 'na';
-  return GOOD_10.has(parseInt(m[1],10))?'good':'bad';
-}
-let lastVerdictKey='';
-function paintIp(){
-  const card=document.getElementById('ipCard'),value=document.getElementById('ipValue'),label=document.getElementById('ipLabel'),sub=document.getElementById('ipSub');
-  if(!card||!value)return;
-  const st=ipState;
-  let main='',lab='IP DU TÉLÉPHONE',subTxt='',cls='wait',verdict='na';
-  if(st){
-    const nn=NET_NAMES[st.net]||'Réseau';
-    if(st.net==='none'){main='Hors ligne';subTxt='Aucune connexion Internet';cls='bad';}
-    else{
-      main=st.local||st.pub||'IP indisponible';
-      lab='IP DU TÉLÉPHONE · '+nn.toUpperCase()+(st.vpn?' · VPN actif':'');
-      verdict=st.vpn?'good':ipVerdict(st.local);
-      const pubTxt=st.pub?('IP publique : '+st.pub):'';
-      if(st.vpn){cls='good';subTxt='✔ VPN connecté'+(pubTxt?' · '+pubTxt:'');}
-      else if(verdict==='good'){cls='good';subTxt='✔ Bon IP'+(pubTxt?' · '+pubTxt:'');}
-      else if(verdict==='bad'){cls='bad';subTxt='✖ Mauvais IP, connexion quand même possible'+(pubTxt?' · '+pubTxt:'');}
-      else{cls=st.local?'good':'wait';subTxt=pubTxt;}
-    }
-  }else if(detectedIp){main=detectedIp;cls='good';}
-  detectedIp=(main&&main!=='Hors ligne'&&main!=='IP indisponible')?main:'';
-  value.textContent=main||'—';
-  if(label)label.textContent=lab;
-  if(sub)sub.textContent=subTxt;
-  card.classList.remove('good','bad','wait');card.classList.add(cls);
-  /* Notification passagère, une seule fois à chaque changement d'IP ou de verdict */
-  if(st&&st.local){
-    const key=st.vpn?'vpn':(st.local+'|'+verdict);
-    if(key!==lastVerdictKey){
-      lastVerdictKey=key;
-      if(st.vpn){/* VPN actif : on reste vert, aucune alerte */}
-      else if(verdict==='bad')toast('⚠ Mauvais IP : '+st.local,'bad');
-      else if(verdict==='good')toast('✔ Bon IP : '+st.local,'good');
-    }
-  }
-}
-// appelé par le code Android
-window.onIp=(json)=>{try{ipState=typeof json==='string'?JSON.parse(json):json;}catch(e){return}paintIp();};
-async function refreshDetectedIp(){
-  if(NATIVE&&JT.refreshIp){try{JT.refreshIp()}catch(e){}return;}
-  // Aperçu navigateur (hors appli) : IP publique uniquement
-  const providers=[
-    async()=>{const r=await fetch('https://api.ipify.org?format=json',{cache:'no-store'});if(!r.ok)throw 0;return (await r.json()).ip;},
-    async()=>{const r=await fetch('https://api4.my-ip.io/ip.json',{cache:'no-store'});if(!r.ok)throw 0;return (await r.json()).ip;}
-  ];
-  for(const getIp of providers){try{const ip=String(await getIp()||'').trim();if(ip){ipState={net:'wifi',local:'',vpn:S.status==='connected',pub:ip};paintIp();return;}}catch(e){}}
-  ipState={net:'wifi',local:'',vpn:S.status==='connected',pub:''};paintIp();
-}
-function copyDetectedIp(){if(!detectedIp)return;try{if(NATIVE&&JT.copyText)JT.copyText(detectedIp);else if(navigator.clipboard)navigator.clipboard.writeText(detectedIp);}catch(e){}}
+/* L’IP n’est plus affichée. Stub conservé pour le code Android qui appelle encore window.onIp. */
+window.onIp=()=>{};
 
 /* ---------- connexion ---------- */
 function toggleVpn(){
@@ -861,7 +806,7 @@ function toggleVpn(){
   }
   S.error=null;
   if(!S.perm&&!NATIVE){
-    sheet(`<h3>Demande de connexion</h3><p class="lead">TOM_TUNNEL souhaite configurer une connexion VPN qui lui permet de surveiller le trafic réseau. N’acceptez que si vous faites confiance à la source.</p>
+    sheet(`<h3>Demande de connexion</h3><p class="lead">TOM TUNNEL souhaite configurer une connexion VPN qui lui permet de surveiller le trafic réseau. N’acceptez que si vous faites confiance à la source.</p>
     <div class="btns"><button class="btn ghost" onclick="denyPerm()">Annuler</button><button class="btn primary" onclick="grantPerm()">OK</button></div>`,true);
     return;
   }
@@ -879,11 +824,11 @@ function connect(){
     }
   }
   S.status='connecting';render();
-  log('Connexion au serveur',sv.type);
+  log('Connexion en cours',connInfo(sv),'conn');
   if(NATIVE){JT.connect(JSON.stringify(Object.assign({},sv,{boost:!!S.boost})));return}
   clearInterval(timer);timer=null;S.status='idle';
   S.error={title:'Moteur VPN indisponible',msg:'Ouvrez cette application dans sa version Android avec le service VPN natif. Aucune connexion fictive ne sera affichée.'};
-  log('Connexion impossible','Le pont Android natif est absent.','err');render();
+  log('Échec de la connexion','Moteur VPN Android indisponible','cerr');render();
 }
 function disconnect(quiet){
   if(NATIVE&&S.status!=='idle'){try{JT.disconnect()}catch(e){}}
@@ -891,7 +836,7 @@ function disconnect(quiet){
   clearInterval(timer);timer=null;
   const was=S.status==='connected';
   S.status='idle';S.dlR=0;S.ulR=0;S.ping=null;
-  if(was&&!quiet)log('VPN déconnecté','');
+  if(was&&!quiet)log('Déconnecté','','conn');
   render();
 }
 function simError(k){
@@ -901,20 +846,38 @@ function simError(k){
     invalid:['Configuration invalide','Vérifiez les champs du serveur (adresse, port, identifiants, transport).','Erreur de connexion','Configuration invalide'],
     xray:['Xray ne démarre pas','Le moteur Xray n’a pas pu démarrer. Consultez le diagnostic pour le détail.','Erreur Xray','Démarrage impossible'],
     slowdns:['SlowDNS ne démarre pas','Le moteur SlowDNS n’a pas pu démarrer. Vérifiez le NS, le résolveur et la clé publique.','Erreur SlowDNS','Démarrage impossible'],
-    perm:['Autorisation VPN refusée','Android doit autoriser TOM_TUNNEL à créer une connexion VPN pour continuer.','Erreur de connexion','Autorisation VPN refusée']
+    ws:['SSH WebSocket ne démarre pas','Le tunnel WebSocket n’a pas pu démarrer. Vérifiez l’hôte, le port, le chemin et les identifiants.','Erreur SSH WebSocket','Démarrage impossible'],
+    perm:['Autorisation VPN refusée','Android doit autoriser TOM TUNNEL à créer une connexion VPN pour continuer.','Erreur de connexion','Autorisation VPN refusée']
   }[k];
   clearInterval(timer);S.status='idle';S.dlR=0;S.ulR=0;S.ping=null;
-  S.error={title:E[0],msg:E[1]};log(E[2],E[3],'err');
+  S.error={title:E[0],msg:E[1]};log(E[2],E[3],'cerr');
   S.stack=[];S.page=null;S.tab='home';
   render();
 }
 
+/* ---------- date d’expiration ---------- */
+function expiryBadge(d){
+  if(!d||!/^\d{4}-\d{2}-\d{2}$/.test(d))return '';
+  const en=S.lang==='en',[y,m,j]=d.split('-').map(Number),end=new Date(y,m-1,j);
+  const today=new Date();today.setHours(0,0,0,0);
+  const days=Math.round((end-today)/864e5);
+  const date=end.toLocaleDateString(en?'en-GB':'fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  let cls='ok',txt;
+  if(days<0){cls='bad';txt=(en?'Expired on ':'Expiré le ')+date}
+  else if(days===0){cls='warn';txt=en?'Expires today':'Expire aujourd’hui'}
+  else{
+    cls=days<=7?'warn':'ok';
+    const left=en?days+(days>1?' days left':' day left'):days+(days>1?' jours restants':' jour restant');
+    txt=(en?'Expires on ':'Expire le ')+date+' · '+left;
+  }
+  return `<div class="exp ${cls}">${ic('clock',14)}<span>${esc(txt)}</span></div>`;
+}
 /* ---------- serveurs ---------- */
 function serversHTML(){
   const list=S.servers.map(s=>{
     const sel=s.id===S.selected;
     return `<div class="srv ${sel?'sel':''}" data-sid="${s.id}">
-      <div class="srv-top"><div class="grow"><div class="srv-name">${esc(s.name||'Serveur importé')}</div><span class="pill">${esc(s.type)}</span>${s.expiryDate?`<div style="color:#e53935;font-weight:700;margin-top:6px">Expiration : ${esc(s.expiryDate)}</div>`:''}</div>${sel?'<span class="badge">Sélectionné</span>':''}</div>
+      <div class="srv-top"><div class="grow"><div class="srv-name">${esc(s.name||'Serveur importé')}</div><span class="pill">${esc(s.type)}</span>${expiryBadge(s.expiryDate)}</div>${sel?'<span class="badge">Sélectionné</span>':''}</div>
       <div class="acts">
         <button class="act ${sel?'on':''}" onclick="selectServer(${s.id})">${ic('check',19)}<span>${sel?'Sélectionné':'Sélectionner'}</span></button>
         <button class="act" ${(s.protected||s.locked)?'disabled aria-disabled="true" title="Profil protégé"':''} onclick="editServer(${s.id})">${ic('edit',19)}<span>Modifier</span></button>
@@ -966,9 +929,10 @@ const opt=(ico,t,s,fn)=>`<button class="row" onclick="${fn}"><span class="bub">$
 function openAdd(){
   sheet(`<h3>Ajouter un serveur</h3><p class="lead">Choisissez comment ajouter votre serveur.</p>
   ${opt('dns','Ajouter un serveur SSH SlowDNS','Tunnel SSH via DNS, moteur séparé',"newSlow()")}
+  ${opt('link','Ajouter un serveur SSH WebSocket','Tunnel SSH via WebSocket (WS / WSS)',"newWs()")}
   ${opt('sliders','Importer manuellement','Coller ou saisir un lien de configuration',"openClip()")}
   ${opt('clip','Importer du presse-papier','Lecture directe du presse-papier',"importClipboardDirect()")}
-  ${opt('file','Importer des fichiers','Choisir un fichier .tom / .jeph sur l’appareil',"openFile()")}
+  ${opt('file','Importer des fichiers','Choisir un fichier .tom sur l’appareil',"openFile()")}
   ${opt('sliders','Configurer manuellement','VLESS, VMess, Trojan, Shadowsocks',"newManual()")}`);
 }
 
@@ -1092,12 +1056,15 @@ async function askJephSecret(txt,name){
 function importParsedClipboard(t){
   S.clipRaw=(t||'').trim();
   const raw=S.clipRaw.replace(/\s+/g,'');
+  if(/^TOM_TUNNEL-/i.test(raw)){const t=tomDecode(raw);if(t)confirmJephImport(t,'');else toast('Key invalide');return}
   if(/^JEPH[123]\./.test(raw)){askJephSecret(raw,'');return}
-  if(/^Jeph:/i.test(raw)){
+  const lk=/^(Jeph|TOM):/i.exec(raw);
+  if(lk){
     try{
-      let payload=raw.slice(5).replace(/-/g,'+').replace(/_/g,'/');
+      let payload=raw.slice(lk[0].length).replace(/-/g,'+').replace(/_/g,'/');
       while(payload.length%4)payload+='=';
       let decoded=decodeURIComponent(escape(atob(payload)));
+      if(/^TOM_TUNNEL\s*-/i.test(decoded)){const t=tomDecode(decoded);if(!t)throw new Error('invalid');confirmJephImport(t,'');return}
       if(/^JEPH[123]\./.test(decoded)){askJephSecret(decoded,'');return}
       let o;
       try{o=JSON.parse(decoded)}catch(_){o=JSON.parse(decodeURIComponent(escape(atob(decoded))))}
@@ -1117,7 +1084,7 @@ async function unlockJephLink(){
   const entered=($('#jephLinkKey').value||'').trim();
   const key=entered?normKey(entered):myKey();
   if(!KEYRE.test(key)){
-    $('#jephLinkErr').innerHTML='<p class="msg" role="alert">Clé invalide. Format : TOM-XXXX-XXXX-XXXX.</p>';
+    $('#jephLinkErr').innerHTML='<p class="msg" role="alert">Clé invalide. Format : JEPH-XXXX-XXXX-XXXX.</p>';
     return;
   }
   try{
@@ -1127,7 +1094,7 @@ async function unlockJephLink(){
     if(o.expiryDate&&!/^\d{4}-\d{2}-\d{2}$/.test(o.expiryDate))delete o.expiryDate;
     S.servers.push(o);persistState();
     S.jephLinkContent=null;
-    log('Importation','Lien TOM protégé importé','imp');
+    log('Importation','Lien Jeph protégé importé','imp');
     closeSheet();focusServer(o.id);toast('Serveur importé');
   }catch(e){
     $('#jephLinkErr').innerHTML='<p class="msg" role="alert">Lien protégé invalide ou clé incorrecte.</p>';
@@ -1135,7 +1102,7 @@ async function unlockJephLink(){
 }
 function doClip(){
   S.clipRaw=$('#clipTxt').value.trim();
-  if(/^(Jeph:|JEPH[123]\.)/i.test(S.clipRaw.replace(/\s+/g,''))){importParsedClipboard(S.clipRaw);return}
+  if(/^(Jeph:|TOM:|TOM_TUNNEL\s*-|JEPH[123]\.)/i.test(S.clipRaw.replace(/\s+/g,''))){importParsedClipboard(S.clipRaw);return}
   const s=parseLink(S.clipRaw);
   if(!s){$('#clipErr').innerHTML='<p class="msg" role="alert">Configuration invalide ou format non reconnu.</p>';log('Erreur d’importation','Format non reconnu','err');return}
   S.clip=s; importParsedClipboard(S.clipRaw);
@@ -1145,7 +1112,7 @@ function saveClip(){
   S.servers.push(s);persistState();log('Importation',s.name+' · '+s.type,'imp');closeSheet();focusServer(s.id);toast('Serveur importé');
 }
 
-/* ---------- import .tom ---------- */
+/* ---------- import .jeph ---------- */
 function openFile(){closeSheet();$('#fileIn').value='';$('#fileIn').click()}
 let pendingJephFile = null;
 
@@ -1157,7 +1124,7 @@ function fileChosen(inp){
     const txt = String(r.result || '').trim();
     if(!txt){ toast('Fichier vide'); inp.value=''; return; }
     pendingJephFile = {text:txt, name:f.name, input:inp};
-    if(/^(vless|vmess|trojan|ss):\/\//i.test(txt) || /^Jeph:/i.test(txt)){ importParsedClipboard(txt); return; }
+    if(/^(vless|vmess|trojan|ss):\/\//i.test(txt) || /^(Jeph|TOM):/i.test(txt) || /^TOM_TUNNEL\s*-/i.test(txt)){ importParsedClipboard(txt); return; }
     if(txt.charAt(0)==='{'){ try{ const o=JSON.parse(txt); if(o&&o.type){ confirmJephImport(o,f.name); return; } }catch(e){} }
     if(/^JEPH[123]\./.test(txt.replace(/\s+/g,''))){ askJephSecret(txt, f.name); return; }
     try{
@@ -1167,7 +1134,7 @@ function fileChosen(inp){
     }catch(e){
       pendingJephFile = null;
       inp.value='';
-      toast('Fichier invalide ou format non reconnu');
+      toast('Fichier .tom invalide ou format non reconnu');
     }
   };
   r.onerror = () => { pendingJephFile=null; inp.value=''; toast('Lecture du fichier impossible'); };
@@ -1176,12 +1143,12 @@ function fileChosen(inp){
 
 function confirmJephImport(o, filename){
   if(!o || !o.type){ toast('Configuration invalide'); return; }
-  const fallback = String(filename || '').replace(/\.tom$/i,'');
+  const fallback = String(filename || '').replace(/\.(tom|jeph)$/i,'');
   const suggested = String(o.name || fallback || 'Serveur importé');
   sheet(`${shHead('Confirmer l’importation','openAdd()')}
     <p class="lead">Vérifiez le nom et les informations avant d’ajouter ce serveur.</p>
     <label class="f"><span>Nom du serveur</span><input id="importJephName" value="${esc(suggested)}" autocomplete="off"></label>
-    ${o.expiryDate && /^\d{4}-\d{2}-\d{2}$/.test(o.expiryDate) ? `<p class="hint">Expiration : ${esc(o.expiryDate)}</p>` : ''}
+    ${o.expiryDate && /^\d{4}-\d{2}-\d{2}$/.test(o.expiryDate) ? expiryBadge(o.expiryDate) : ''}
     <div class="btns"><button class="btn ghost" onclick="closeSheet()">Annuler</button><button class="btn primary" onclick="finishJephImport()">Importer</button></div>`);
   window.pendingJephObject = o;
 }
@@ -1223,67 +1190,74 @@ function shareSheet(id){
   S.ex={id,mode:'share'};
   sheet(`<h3>Partager</h3><p class="lead">${esc(S.servers.find(s=>s.id===id).name)}</p>
   <div class="share-options">
-  ${opt('share','Exporter et partager','Envoyer le fichier .tom / .jeph avec une application',"exportSheet('share')")}
-  ${opt('file','Exporter en fichier .tom / .jeph','Enregistrer le fichier sur l’appareil',"exportSheet('save')")}
+  ${opt('share','Exporter et partager','Envoyer le fichier .tom avec une application',"exportSheet('share')")}
+  ${opt('file','Exporter en fichier .tom','Enregistrer le fichier sur l’appareil',"exportSheet('save')")}
   ${opt('link','Exporter le lien','Générer un lien TOM: à copier dans le presse-papiers',"exportSheet('link')")}
+  ${opt('key','Exporter en Key','Clé TOM_TUNNEL facile à copier et à coller',"exportSheet('key')")}
   </div>`);
 }
 const shHead=(t,fn)=>`<div class="sh-head"><button class="ib" onclick="${fn}" aria-label="Retour">${ic('back')}</button><h3>${t}</h3></div>`;
+/* Format TOM : « TOM_TUNNEL -<données> ». Les données sont encodées (non lisibles) ; aucun mot de passe requis. */
+const TOM_PREFIX='TOM_TUNNEL -',TOM_MASK='TOM_TUNNEL';
+function tomEncode(o){
+  const b=new TextEncoder().encode(JSON.stringify(o));let t='';
+  b.forEach((v,i)=>{t+=String.fromCharCode(v^TOM_MASK.charCodeAt(i%TOM_MASK.length))});
+  return TOM_PREFIX+btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function tomDecode(s){
+  const m=/^TOM_TUNNEL-([A-Za-z0-9_-]+)$/i.exec(String(s||'').replace(/\s+/g,''));
+  if(!m)return null;
+  try{
+    let p=m[1].replace(/-/g,'+').replace(/_/g,'/');while(p.length%4)p+='=';
+    const raw=atob(p),b=new Uint8Array(raw.length);
+    for(let i=0;i<raw.length;i++)b[i]=raw.charCodeAt(i)^TOM_MASK.charCodeAt(i%TOM_MASK.length);
+    const o=JSON.parse(new TextDecoder().decode(b));
+    return o&&o.type?o:null;
+  }catch(e){return null}
+}
 function exportSheet(mode,keep){
   const e=S.ex,s=S.servers.find(x=>x.id===e.id);
-  if(!keep){e.hide=false;e.rk=false;e.name=null;e.date='';e.key='';e.password=''}
+  if(!keep){e.hide=true;e.name=null;e.date=''}
   e.mode=mode;
-  const share=mode==='share';
   const slug=e.name||s.name.replace(/[^\w-]+/g,'_');
-  sheet(`${shHead(share?'Partager le serveur':'Exporter le serveur','shareSheet('+e.id+')')}<p class="lead">${esc(s.name)}</p>
+  const label={share:'Partager',save:'Exporter .tom',link:'Copier le lien',key:'Générer la Key'}[mode];
+  sheet(`${shHead(mode==='share'?'Partager le serveur':'Exporter le serveur','shareSheet('+e.id+')')}<p class="lead">${esc(s.name)}</p>
   <div id="exErr"></div>
-  <label class="f"><span>Nom du fichier</span><input id="exName" value="${esc(slug)}" autocomplete="off" autocapitalize="off"></label>
+  <label class="f"><span>Nom</span><input id="exName" value="${esc(slug)}" autocomplete="off" autocapitalize="off"></label>
   <label class="f"><span>Date d’expiration (optionnelle)</span><input id="exDate" type="date" value="${esc(e.date)}"></label>
-  <label class="f"><span>Mot de passe du fichier (facultatif)</span><input id="exPassword" type="password" value="${esc(e.password||'')}" placeholder="Vide = aucun mot de passe" autocomplete="new-password"></label>
-  <div class="tg"><div><b>Cacher les données</b><span>Chiffre le fichier : mot de passe ou clé destinataire obligatoire.</span></div><button class="sw ${e.hide?'on':''}" role="switch" aria-checked="${!!e.hide}" aria-label="Cacher les données" onclick="flip(this,'hide')"></button></div>
-  <div class="tg"><div><b>Clé du destinataire</b><span>Seul le téléphone qui possède cette clé peut l’ouvrir, sans rien saisir. Avec un mot de passe, les deux sont exigés.</span></div><button class="sw ${e.rk?'on':''}" role="switch" aria-checked="${!!e.rk}" aria-label="Clé du destinataire" onclick="flip(this,'rk')"></button></div>
-  <label class="f ${e.rk?'':'hidden'}" id="rkBox"><span>Clé TOM du destinataire</span><textarea id="rkKey" placeholder="Colle ici la clé envoyée par l’utilisateur" spellcheck="false">${esc(e.key)}</textarea></label>
-  <div class="btns"><button class="btn ghost" onclick="closeSheet()">Annuler</button><button class="btn primary" onclick="doExport()">${e.mode==='link'?'Copier le lien':share?'Partager':'Exporter .tom'}</button></div>`);
+  <div class="tg"><div><b>Masquer les informations sensibles</b><span>Mot de passe, identifiants et clés restent cachés chez le destinataire. Aucun mot de passe à définir.</span></div><button class="sw ${e.hide?'on':''}" role="switch" aria-checked="${!!e.hide}" aria-label="Masquer les informations sensibles" onclick="flip(this,'hide')"></button></div>
+  <div class="btns"><button class="btn ghost" onclick="closeSheet()">Annuler</button><button class="btn primary" onclick="doExport()">${label}</button></div>`);
 }
-function flip(el,k){S.ex[k]=!S.ex[k];el.classList.toggle('on',S.ex[k]);el.setAttribute('aria-checked',S.ex[k]);if(k==='rk')$('#rkBox').classList.toggle('hidden',!S.ex.rk)}
-async function doExport(){
-  const e=S.ex,err=m=>{$('#exErr').innerHTML='<p class="msg" role="alert">'+m+'</p>'};
-  e.key=$('#rkKey').value;e.date=$('#exDate').value;
-  if(e.rk){const k=normKey(e.key);
-    if(!k){err('Collez la clé Jeph du destinataire.');return}
-    if(!KEYRE.test(k)){err('Clé Jeph invalide. Format : TOM-XXXX-XXXX-XXXX.');return}
-    e.key=k}
-  const n=($('#exName').value||'serveur').trim().replace(/\.tom$/i,'')||'serveur';
+function flip(el,k){S.ex[k]=!S.ex[k];el.classList.toggle('on',S.ex[k]);el.setAttribute('aria-checked',S.ex[k])}
+function doExport(){
+  const e=S.ex;e.date=$('#exDate').value;
+  const n=($('#exName').value||'serveur').trim().replace(/\.(tom|jeph)$/i,'')||'serveur';
   e.name=n;e.file=n+'.tom';
   const o=Object.assign({},S.servers.find(x=>x.id===e.id)||{});delete o.id;
   o.name=n;
   if(e.date)o.expiryDate=e.date;else delete o.expiryDate;
-  const password=($('#exPassword').value||'');
-  e.password=password;
-  if(e.hide && !password && !e.rk){err('Pour cacher les données, définissez un mot de passe ou activez la clé du destinataire.');return;}
-  o.protected=!!e.hide;o.locked=!!e.hide;
-  try{
-    if(e.rk&&password){const inner=await sealFile(o,'PASS:'+password);e.content=(await sealFile({jeph2:inner},e.key)).replace(/^JEPH1\./,'JEPH3.')}
-    else if(e.rk){e.content=await sealFile(o,e.key)}
-    else if(password){e.content=(await sealFile(o,'PASS:'+password)).replace(/^JEPH1\./,'JEPH2.')}
-    else { e.content=btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }
-  }catch(x){err('Chiffrement impossible sur cet appareil.');return}
+  o.protected=o.locked=!!e.hide;
+  e.content=tomEncode(o);
   if(e.mode==='share')androidShare();
-  else if(e.mode==='link'){
-    const link='Jeph:'+btoa(unescape(encodeURIComponent(e.content)));
-    if(NATIVE&&JT.copyText)JT.copyText(link);
-    else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(link).catch(()=>{});
-    closeSheet();toast('Lien Jeph copié');
-  }else destSheet();
+  else if(e.mode==='link'){copyText('TOM:'+btoa(e.content),'Lien TOM copié');closeSheet()}
+  else if(e.mode==='key')keySheet();
+  else destSheet();
 }
+function keySheet(){
+  sheet(`${shHead('Votre Key',"exportSheet('key',true)")}
+  <p class="lead">Copiez cette clé puis collez-la dans « Importer du presse-papier ».</p>
+  <div class="keybox" id="keyOut">${esc(S.ex.content)}</div>
+  <div class="btns"><button class="btn ghost" onclick="copyText(S.ex.content,'Key copiée')">Copier</button><button class="btn primary" onclick="shareKeyText()">Partager</button></div>`);
+}
+function shareKeyText(){if(NATIVE&&JT.shareText)JT.shareText(S.ex.content);else copyText(S.ex.content,'Key copiée')}
 function destSheet(){
   sheet(`${shHead('Enregistrer le fichier',"exportSheet('save',true)")}<p class="lead">Choisissez l’emplacement sur votre appareil.</p>
   <div class="fp"><b>Dossier</b>Téléchargements</div>
   <div class="fp"><b>Nom</b>${esc(S.ex.file)}</div>
   <div class="btns"><button class="btn ghost" onclick="closeSheet()">Annuler</button><button class="btn primary" onclick="saveExport()">Enregistrer</button></div>`);
 }
-/* ---------- chiffrement .tom (clé du destinataire) ---------- */
-const KEYRE=/^(JEPH-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}|TOM_TUNNEL-[A-Z0-9]{5}-[A-Z0-9]{5})$/;
+/* ---------- chiffrement .jeph (clé du destinataire) ---------- */
+const KEYRE=/^JEPH-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/;
 const normKey=k=>String(k||'').toUpperCase().replace(/\s+/g,'');
 const b64=u=>{let t='';u.forEach(c=>t+=String.fromCharCode(c));return btoa(t)};
 const unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
@@ -1319,11 +1293,13 @@ function shared(app){if(NATIVE){if(app==='Copier')JT.copyText(jephContent());els
 const PROTOS=['VLESS','VMESS','TROJAN','Shadowsocks'];
 const blankDraft=()=>({id:null,proto:'VLESS',name:'',addr:'',port:'443',uuid:'',pass:'',method:'aes-256-gcm',network:'tcp',security:'tls',tls:true,sni:'',host:'',path:'/',flow:'',alpn:'',fp:'chrome',pbk:'',sid:'',spx:'/',aid:'0'});
 function newManual(){closeSheet();S.draft=blankDraft();openPage('manual')}
+function newWs(){closeSheet();S.ws={id:null,name:'',host:'',port:'443',tls:true,sni:'',wsHost:'',path:'/',payload:'',user:'',pass:''};openPage('wsh')}
 function newSlow(){closeSheet();S.sd={id:null,name:'',ns:'',resolver:'',pubkey:'',host:'',sshPort:'22',dnsPort:'53',user:'',pass:''};openPage('slowdns')}
 function editServer(id){
   const s=S.servers.find(x=>x.id===id);
   if(!s||s.protected||s.locked)return;
   if(s.type==='SSH SlowDNS'){S.sd=Object.assign({},s);openPage('slowdns')}
+  else if(s.type==='SSH WebSocket'){S.ws=Object.assign({},s);openPage('wsh')}
   else{S.draft=Object.assign(blankDraft(),s,{proto:s.type});openPage('manual')}
 }
 function fld(l,k,type,ph,obj){obj=obj||'S.draft';return `<label class="f"><span>${l}</span><input type="${type}" value="${esc(eval(obj)[k])}" placeholder="${esc(ph)}" oninput="${obj}['${k}']=this.value" autocomplete="off" autocapitalize="off" spellcheck="false" ${type==='number'?'inputmode="numeric"':''}></label>`}
@@ -1384,6 +1360,34 @@ function slowHTML(){
   ${fld('Mot de passe','pass','password','Mot de passe SSH',o)}
   <button class="btn primary block" onclick="saveSlow()">Enregistrer</button>`;
 }
+function wsHTML(){
+  const d=S.ws,o='S.ws';
+  return `<div class="ph back"><button class="ib" onclick="closePage()" aria-label="Retour">${ic('back')}</button><h1>${d.id?'Modifier le serveur':'Ajouter un serveur SSH WebSocket'}</h1></div>
+  <div id="formErr"></div>
+  ${fld('Nom du serveur','name','text','Ex : Mon serveur WebSocket',o)}
+  ${fld('Hôte / Serveur','host','text','ex : exemple.com',o)}
+  ${fld('Port','port','number','443',o)}
+  <div class="tg"><div><b>TLS (WSS)</b></div><button type="button" class="sw ${d.tls?'on':''}" role="switch" aria-checked="${!!d.tls}" aria-label="TLS (WSS)" onclick="S.ws.tls=!S.ws.tls;this.classList.toggle('on');this.setAttribute('aria-checked',S.ws.tls)"></button></div>
+  ${fld('SNI','sni','text','ex : exemple.com',o)}
+  ${fld('Host (en-tête WebSocket)','wsHost','text','ex : exemple.com',o)}
+  ${fld('Chemin WebSocket (Path)','path','text','/',o)}
+  <label class="f"><span>Payload personnalisé (optionnel)</span><textarea placeholder="GET / HTTP/1.1[crlf]Host: [host][crlf]Upgrade: websocket[crlf][crlf]" oninput="S.ws.payload=this.value" spellcheck="false" autocapitalize="off">${esc(d.payload)}</textarea></label>
+  ${fld('Nom d’utilisateur','user','text','Identifiant SSH',o)}
+  ${fld('Mot de passe','pass','password','Mot de passe SSH',o)}
+  <button class="btn primary block" onclick="saveWs()">Enregistrer</button>`;
+}
+function saveWs(){
+  const d=S.ws,port=+d.port;let e='';
+  if(!d.host.trim())e='Renseignez l’hôte du serveur.';
+  else if(!(port>=1&&port<=65535))e='Le port doit être compris entre 1 et 65535.';
+  else if(!d.user.trim())e='Renseignez le nom d’utilisateur.';
+  else if(!d.pass)e='Renseignez le mot de passe.';
+  if(e){$('#formErr').innerHTML=`<p class="msg" role="alert">${e}</p>`;$('#main').scrollTop=0;return}
+  const s=Object.assign({},d,{type:'SSH WebSocket',name:d.name.trim()||'Serveur WebSocket',host:d.host.trim(),path:(d.path||'/').trim()||'/',id:d.id||Date.now()});
+  const i=S.servers.findIndex(x=>x.id===s.id);
+  if(i>=0)S.servers[i]=s;else S.servers.push(s);
+  closeSheet();focusServer(s.id);toast('Serveur enregistré');
+}
 function saveSlow(){
   const d=S.sd;let e='';
   if(!d.ns.trim())e='Renseignez le nameserver (NS).';
@@ -1401,26 +1405,22 @@ function saveSlow(){
 /* ---------- journal ---------- */
 function logHTML(){
   return `<div class="ph"><h1>Journal</h1>${S.logs.length?'<button class="link" onclick="S.logs=[];persistState();render()">Effacer le journal</button>':''}</div>
-  ${S.logs.length?`<div class="card" style="padding:4px 16px">${S.logs.map(l=>`<div class="lg"><time>${l.t}</time><i class="d ${l.kind==='err'?'err':l.kind==='imp'?'imp':''}"></i><div class="grow"><b>${esc(l.title)}</b>${l.sub?`<span>${esc(l.sub)}</span>`:''}</div></div>`).join('')}</div>`
-  :`<div class="empty"><b>Aucun événement</b>Les connexions, importations et erreurs apparaîtront ici.</div>`}`;
+  ${S.logs.length?`<div class="card" style="padding:4px 16px">${S.logs.map(l=>`<div class="lg"><time>${l.t}</time><i class="d ${l.kind==='cerr'?'err':'imp'}"></i><div class="grow"><b>${esc(l.title)}</b>${l.sub?`<span>${esc(l.sub)}</span>`:''}</div></div>`).join('')}</div>`
+  :`<div class="empty"><b>Aucun événement</b>Les événements de connexion apparaîtront ici.</div>`}`;
 }
 
 /* ---------- plus ---------- */
 function moreHTML(){
-  const langLabel=(S.lang==='en')?'English':'Français';
-  return `<div class="ph"><h1>${t('more')}</h1></div>
+  return `<div class="ph"><h1>Plus</h1></div>
   <div class="card list">
-   <div class="row boostrow" style="cursor:default"><span class="bub">${ic('bolt',21)}</span><span class="grow"><div class="tt">${t('boost')}</div><div class="ss">${S.lang==='en'?'Optimizes the connection for more speed. Applied on next connect.':'Optimise la connexion pour plus de vitesse. Pris en compte à la prochaine connexion.'}</div></span><button type="button" class="sw ${S.boost?'on':''}" role="switch" aria-checked="${!!S.boost}" aria-label="${t('boost')}" onclick="toggleBoost(this)"></button></div>
-   ${opt('palette',t('theme'),S.lang==='en'?'Dark, Light or System.':'Noir, Blanc ou Système.',"openPage('theme')")}
-   ${opt('dns',t('dns'),S.lang==='en'?'Configure DNS used by the VPN':'Configurer le DNS utilisé par le VPN',"openPage('dns')")}
-   ${opt('dns',t('language'),langLabel,"openPage('lang')")}
-   ${opt('key',t('shareKey'),S.lang==='en'?'Create or import configs via unique key':'Créer ou importer des configs via une clé unique',"openPage('share')")}
-   ${opt('key','Clé appareil',S.lang==='en'?'Your personal device key':'Votre clé personnelle d’appareil',"openPage('key')")}
-   ${opt('tg',t('telegram'),'https://t.me/FREE_INTERNET237',"openTelegram()")}
-   ${opt('tg',t('whatsapp'),'+237654145540',"openWhatsApp()")}
-   ${opt('info',t('about'),S.lang==='en'?'Version, engines and developer':'Version, moteurs et développeur',"openPage('about')")}
+   <div class="row boostrow" style="cursor:default"><span class="bub">${ic('bolt',21)}</span><span class="grow"><div class="tt">Mode Boost</div><div class="ss">Optimise la connexion pour plus de vitesse. Pris en compte à la prochaine connexion.</div></span><button type="button" class="sw ${S.boost?'on':''}" role="switch" aria-checked="${!!S.boost}" aria-label="Mode Boost" onclick="toggleBoost(this)"></button></div>
+   ${opt('palette','Thème','Noir, Blanc ou Système.',"openPage('theme')")}
+   ${opt('dns','DNS','Configurer le DNS utilisé par le VPN',"openPage('dns')")}
+   ${opt('dns','Langue',LANGS[S.lang],"openPage('lang')")}
+   ${opt('tg','Contact','Telegram et WhatsApp',"openPage('contact')")}
+   ${opt('info','À propos','Version, fonctionnement et informations sur TOM TUNNEL.',"openPage('about')")}
   </div>
-  <p class="sub" style="text-align:center;margin-top:18px">TOM_TUNNEL 1.0.0 · By JOELTOM</p>`;
+  <p class="sub" style="text-align:center;margin-top:18px">TOM TUNNEL ${APP_VERSION} · BY JOELTOM</p>`;
 }
 const head=t=>`<div class="ph back"><button class="ib" onclick="closePage()" aria-label="Retour">${ic('back')}</button><h1>${t}</h1></div>`;
 function pageHTML(){
@@ -1428,29 +1428,18 @@ function pageHTML(){
     case 'manual':return manualHTML();
     case 'slowdns':return slowHTML();
     case 'theme':return themeHTML();
-    case 'key':return keyHTML();
     case 'dns':return dnsHTML();
     case 'lang':return langHTML();
-    case 'telegram':return tgHTML();
+    case 'contact':return contactHTML();
+    case 'wsh':return wsHTML();
     case 'about':return aboutHTML();
-    case 'share':return shareHTML();
   }
 }
 function myKey(){
-  try{let k=localStorage.getItem('tt-device-key');
-    if(!k){const a=new Uint8Array(10);crypto.getRandomValues(a);const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      const t=[...a].map(x=>ch[x%ch.length]).join('');k='TOM_TUNNEL-'+t.slice(0,5)+'-'+t.slice(5,10);localStorage.setItem('tt-device-key',k)}
-    return k}catch(e){return 'TOM_TUNNEL-00000-00000'}}
-function copyKey(){const k=myKey();if(NATIVE)JT.copyText(k);else try{navigator.clipboard.writeText(k)}catch(e){}toast('Clé copiée')}
-function shareKey(){const k=myKey();if(NATIVE)JT.shareText(k);else copyKey()}
-function keyHTML(){
-  return head('Clé TOM_TUNNEL')+`<div class="card" style="text-align:center">
-    <div class="lbl">Votre clé personnelle</div>
-    <div class="big" style="font-size:22px;letter-spacing:1px;margin:10px 0 14px;font-variant-numeric:tabular-nums">${esc(myKey())}</div>
-    <div style="display:flex;gap:10px"><button class="btn ghost grow" onclick="copyKey()">Copier</button><button class="btn primary grow" onclick="shareKey()">Partager</button></div>
-  </div>
-  <p class="hint">Donnez cette clé à la personne qui veut vous envoyer un fichier .tom / .jeph protégé : elle la colle dans « Clé TOM du destinataire » lors de l'export.</p>`;
-}
+  try{let k=localStorage.getItem('jt-key');
+    if(!k){const a=new Uint8Array(12);crypto.getRandomValues(a);const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const t=[...a].map(x=>c[x%c.length]).join('');k='JEPH-'+t.slice(0,4)+'-'+t.slice(4,8)+'-'+t.slice(8,12);localStorage.setItem('jt-key',k)}
+    return k}catch(e){return 'JEPH-0000-0000-0000'}}
 function toggleBoost(btn){
   S.boost=!S.boost;persistState();
   btn.classList.toggle('on',S.boost);btn.setAttribute('aria-checked',String(S.boost));
@@ -1464,7 +1453,7 @@ function setThemePreset(mode){
 }
 function setMode(m){setThemePreset(m)}
 function themeHTML(){
-  const M=[['dark','Noir','Fond sombre, accents rouge, jaune et vert','dk'],['light','Blanc','Fond clair, accents rouge, jaune et vert',''],['system','Système','Suit le réglage clair ou sombre du téléphone','sy']];
+  const M=[['dark','Noir','Fond sombre, accents orange','dk'],['light','Blanc','Fond clair, accents orange',''],['system','Système','Suit le réglage clair ou sombre du téléphone','sy']];
   const prev=c=>`<div class="tp ${c}" aria-hidden="true"><div class="f"></div><div class="r"></div><div class="c"></div><div class="n"></div></div>`;
   return head('Thèmes')+`<div class="lbl" style="margin:0 2px 8px">Choisir un thème</div>
   <div style="display:grid;gap:10px">${M.map(m=>{const on=S.mode===m[0];return `<button class="card" style="display:flex;align-items:center;gap:14px;text-align:left;padding:14px;min-width:0;border:1px solid ${on?'var(--acc)':'var(--line)'};box-shadow:${on?'0 0 0 1px var(--acc)':'none'}" onclick="setThemePreset('${m[0]}')" aria-pressed="${on}">${prev(m[3])}<div style="flex:1;min-width:0"><div class="tt">${m[1]}</div><div class="ss">${m[2]}</div></div>${on?`<span style="color:var(--acc-ink)">${ic('check',22)}</span>`:''}</button>`}).join('')}</div>`;
@@ -1482,175 +1471,95 @@ function saveDns(){
   if(!/^[0-9a-fA-F:.]+$/.test(v)){ $('#dnsErr').innerHTML='<p class="msg" role="alert">Adresse DNS invalide.</p>'; return }
   S.dns=v;persistState();toast('DNS enregistré');closePage();
 }
-function tgHTML(){
-  let host='';try{host=new URL(S.tg).host}catch(e){host=S.tg}
-  return head('Canal Telegram')+`
-  <label class="f"><span>Lien du canal (configurable)</span><input type="url" value="${esc(S.tg)}" oninput="S.tg=this.value" autocapitalize="off" spellcheck="false"></label>
-  <div class="wv"><div class="wv-bar">${ic('lock',15)}<span>${esc(host)}</span></div>
-  <div class="wv-body">Le canal s’affiche ici, dans la WebView intégrée à l’application.</div></div>
-  <p class="hint">Si la WebView ne peut pas ouvrir le lien, l’application propose de l’ouvrir dans le navigateur.</p>
-  <button class="btn ghost block" onclick="openExt()">Ouvrir dans le navigateur</button>`;
+function langHTML(){
+  return head('Langue')+`<p class="lead">Choisissez la langue de l’application.</p><div class="card list">${Object.keys(LANGS).map(k=>`<button class="row" onclick="setLang('${k}')"><span class="grow"><div class="tt">${LANGS[k]}</div></span>${S.lang===k?`<span style="color:var(--acc-ink)">${ic('check')}</span>`:''}</button>`).join('')}</div>`;
 }
-function openTelegram(){
-  let url='https://t.me/FREE_INTERNET237';
-  try{const candidate=new URL(String(S.tg||url).trim());if(candidate.protocol==='https:'&&(candidate.hostname==='t.me'||candidate.hostname==='telegram.me'||candidate.hostname==='www.t.me'))url=candidate.href;}catch(e){}
-  if(NATIVE){try{JT.openUrl(url)}catch(e){toast('Impossible d’ouvrir Telegram')}return}
+const WA_ICON='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z"/><path d="M9 9c0 3 3 6 6 6l1.2-1.4-2-1-1 .6c-.8-.4-1.6-1.2-2-2l.6-1-1-2z"/></svg>';
+function contactHTML(){
+  return head('Contact')+`<p class="lead">Besoin d’aide ? Contactez-nous.</p>
+  <div class="card list">
+   <button class="row" onclick="openTelegram()"><span class="bub">${ic('tg',21)}</span><span class="grow"><div class="tt">Canal Telegram</div><div class="ss">t.me/FREE_INTERNET237</div></span>${ic('chev',18)}</button>
+   <button class="row" onclick="openWhatsApp()"><span class="bub">${WA_ICON}</span><span class="grow"><div class="tt">WhatsApp</div><div class="ss">${CONTACT.whatsapp}</div></span>${ic('chev',18)}</button>
+  </div>
+  <button class="btn ghost block" onclick="copyText(CONTACT.whatsapp,'Numéro copié')">Copier le numéro WhatsApp</button>`;
+}
+function copyText(t,msg){try{if(NATIVE&&JT.copyText)JT.copyText(t);else if(navigator.clipboard)navigator.clipboard.writeText(t)}catch(e){}if(msg)toast(msg)}
+function openUrlSafe(url,errMsg){
+  if(NATIVE){try{JT.openUrl(url)}catch(e){toast(errMsg)}return}
   try{const w=window.open(url,'_blank','noopener,noreferrer');if(!w)window.location.href=url}catch(e){window.location.href=url}
 }
-function openExt(){openTelegram()}
+const openTelegram=()=>openUrlSafe(CONTACT.telegram,'Impossible d’ouvrir Telegram');
+const openWhatsApp=()=>openUrlSafe(CONTACT.whatsappUrl,'Impossible d’ouvrir WhatsApp');
 function aboutHTML(){
-  return head(t('about'))+`
+  return head('À propos')+`
   <div style="text-align:center;padding:6px 0 4px">${logo(76)}
-   <div class="wm" style="font-size:26px;margin-top:12px"><b>TOM</b><em>_TUNNEL</em></div>
-   <div class="tag" style="font-size:10.5px">VPN • FAST • SECURE</div>
-   <div class="star" aria-hidden="true"><i></i><svg width="18" height="18" viewBox="0 0 24 24" fill="#FCD116"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7L2 9.2l7.1-.6z"/></svg><i></i></div></div>
-  <div class="card" style="margin-top:20px;text-align:center">
-   <img id="avaImg" class="ava" src="${AVATAR}" alt="Developer">
-   <div class="lbl">${t('developer')}</div><div class="big">JOELTOM</div>
-  </div>
-  <div class="card">
-   <div class="kv"><span>${t('version')}</span><span>1.0.0</span></div>
-   <div class="kv"><span>${t('engines')}</span><span>Xray · SlowDNS / SSH</span></div>
-   <div class="kv"><span>Package</span><span>com.tomtunnel.app</span></div>
-  </div>
+   <div class="wm" style="font-size:26px;margin-top:12px"><b>TOM</b><em>TUNNEL</em></div>
+   <div class="tag" style="font-size:10.5px">VPN • RAPIDE • SÉCURISÉ</div></div>
+  <div class="card" style="margin-top:20px"><div class="kv"><span>Version</span><span>${APP_VERSION}</span></div>
+   <div class="kv"><span>Développé par</span><span>JOELTOM</span></div>
+   <div class="kv"><span>Protocoles</span><span>VLESS · VMess · Trojan · SS · SSH</span></div></div>
   <div class="card list">
-   ${opt('tg','Telegram','@FREE_INTERNET237',"openTelegram()")}
-   ${opt('tg','WhatsApp','+237 654 145 540',"openWhatsApp()")}
+   <button class="row" onclick="openTelegram()"><span class="bub">${ic('tg',21)}</span><span class="grow"><div class="tt">Telegram</div><div class="ss">t.me/FREE_INTERNET237</div></span>${ic('chev',18)}</button>
+   <button class="row" onclick="openWhatsApp()"><span class="bub">${WA_ICON}</span><span class="grow"><div class="tt">WhatsApp</div><div class="ss">${CONTACT.whatsapp}</div></span>${ic('chev',18)}</button>
   </div>
-  <div class="card"><b>${S.lang==='en'?'How it works':'Fonctionnement'}</b><p class="sub" style="margin:6px 0 0">${S.lang==='en'
-    ? 'TOM_TUNNEL connects to your own servers: Xray for VLESS, VMess, Trojan and Shadowsocks; SlowDNS for SSH tunnels. No server is imposed; configs stay on your device.'
-    : 'TOM_TUNNEL se connecte à vos propres serveurs : Xray pour VLESS, VMess, Trojan et Shadowsocks, SlowDNS pour les tunnels SSH. Aucun serveur n’est imposé et vos configurations restent sur votre appareil.'}</p></div>`;
+  <div class="card"><b>Fonctionnement</b><p class="sub" style="margin:6px 0 0">TOM TUNNEL se connecte à vos propres serveurs : Xray pour VLESS, VMess, Trojan et Shadowsocks, SlowDNS et SSH WebSocket pour les tunnels SSH. Aucun serveur n’est imposé et vos configurations restent sur votre appareil.</p></div>
+  <p class="sub" style="text-align:center;margin-top:14px">BY JOELTOM</p>`;
 }
-
-/* ---------- i18n FR / EN ---------- */
-const I18N={
-fr:{
-  home:'Accueil',servers:'Serveurs',logs:'Journal',more:'Plus',
-  connect:'Connecter',disconnect:'Déconnecter',connecting:'Connexion…',connected:'Connecté',
-  theme:'Thème',dns:'DNS',language:'Langue',about:'À propos',boost:'Mode Boost',
-  telegram:'Telegram',whatsapp:'WhatsApp',version:'Version',engines:'Moteurs',
-  developer:'Développé par',shareKey:'Partager une clé',createKey:'Créer une clé',
-  importKey:'Importer avec une clé',deleteKey:'Supprimer la clé',
-  langFr:'Français',langEn:'English',saved:'Enregistré',copied:'Copié',
-  settings:'Paramètres'
-},
-en:{
-  home:'Home',servers:'Servers',logs:'Logs',more:'More',
-  connect:'Connect',disconnect:'Disconnect',connecting:'Connecting…',connected:'Connected',
-  theme:'Theme',dns:'DNS',language:'Language',about:'About',boost:'Boost Mode',
-  telegram:'Telegram',whatsapp:'WhatsApp',version:'Version',engines:'Engines',
-  developer:'Developed by',shareKey:'Share a key',createKey:'Create a key',
-  importKey:'Import with a key',deleteKey:'Delete key',
-  langFr:'Français',langEn:'English',saved:'Saved',copied:'Copied',
-  settings:'Settings'
+/* ---------- langues (FR source · EN via dictionnaire) ---------- */
+const EN={"Accueil": "Home", "Serveurs": "Servers", "Journal": "Logs", "Plus": "More", "Navigation principale": "Main navigation", "VPN • RAPIDE • SÉCURISÉ": "VPN • FAST • SECURE", "Connecté": "Connected", "Connexion…": "Connecting…", "Connecter": "Connect", "Appuyez pour vous déconnecter": "Tap to disconnect", "Établissement du tunnel…": "Establishing tunnel…", "État réel du tunnel": "Tunnel status", "Choisir un serveur": "Choose a server", "Sélectionnez un serveur": "Select a server", "Serveur sélectionné": "Selected server", "Aucun serveur sélectionné": "No server selected", "Actif": "Active", "Trafic": "Traffic", "Réinitialiser": "Reset", "Réinitialiser le trafic": "Reset traffic", "Trafic entrant": "Download", "Trafic sortant": "Upload", "Durée": "Duration", "Plus de paramètres": "More settings", "Fermer": "Close", "Retour": "Back", "Connexion impossible": "Connection failed", "Erreur inconnue": "Unknown error", "Moteur VPN indisponible": "VPN engine unavailable", "Ouvrez cette application dans sa version Android avec le service VPN natif. Aucune connexion fictive ne sera affichée.": "Open this app in its Android version with the native VPN service. No fake connection will be shown.", "Serveur inaccessible": "Server unreachable", "Vérifiez votre connexion Internet, l’adresse et le port du serveur.": "Check your Internet connection and the server address and port.", "Configuration invalide": "Invalid configuration", "Autorisation VPN refusée": "VPN permission denied", "Android doit autoriser TOM TUNNEL à créer une connexion VPN pour continuer.": "Android must allow TOM TUNNEL to create a VPN connection to continue.", "Choisissez d’abord un serveur": "Choose a server first", "Serveur expiré : renouvellement nécessaire": "Server expired: renewal required", "Demande de connexion": "Connection request", "TOM TUNNEL souhaite configurer une connexion VPN qui lui permet de surveiller le trafic réseau. N’acceptez que si vous faites confiance à la source.": "TOM TUNNEL wants to set up a VPN connection that lets it monitor network traffic. Only accept if you trust the source.", "Annuler": "Cancel", "Aucun serveur enregistré": "No saved servers", "Ajoutez votre premier serveur pour pouvoir vous connecter.": "Add your first server to connect.", "+ Ajouter un serveur": "+ Add a server", "Sélectionné": "Selected", "Sélectionner": "Select", "Modifier": "Edit", "Partager": "Share", "Supprimer": "Delete", "Profil protégé": "Protected profile", "Serveur importé": "Imported server", "Déconnexion requise": "Disconnect required", "Déconnectez-vous d’abord avant de sélectionner un autre serveur.": "Disconnect first before selecting another server.", "Supprimer ce serveur ?": "Delete this server?", "Serveur supprimé": "Server deleted", "Ajouter un serveur": "Add a server", "Choisissez comment ajouter votre serveur.": "Choose how to add your server.", "Ajouter un serveur SSH SlowDNS": "Add an SSH SlowDNS server", "Tunnel SSH via DNS, moteur séparé": "SSH tunnel over DNS, separate engine", "Ajouter un serveur SSH WebSocket": "Add an SSH WebSocket server", "Tunnel SSH via WebSocket (WS / WSS)": "SSH tunnel over WebSocket (WS / WSS)", "Importer manuellement": "Import manually", "Coller ou saisir un lien de configuration": "Paste or type a configuration link", "Importer du presse-papier": "Import from clipboard", "Lecture directe du presse-papier": "Read the clipboard directly", "Importer des fichiers": "Import files", "Choisir un fichier .tom sur l’appareil": "Pick a .tom file on your device", "Configurer manuellement": "Configure manually", "Saisissez ou collez votre lien.": "Type or paste your link.", "Lien de configuration": "Configuration link", "Importer maintenant": "Import now", "Vérifiez le lien puis importez.": "Check the link, then import.", "Presse-papier vide ou inaccessible": "Clipboard empty or inaccessible", "Fichier non autorisé": "File not allowed", "Ce fichier ne vous appartient pas.": "This file is not yours.", "Fichier protégé par mot de passe": "Password-protected file", "Saisissez le mot de passe choisi lors de l’exportation.": "Enter the password chosen at export.", "Mot de passe du fichier": "File password", "Mot de passe": "Password", "Importer le fichier": "Import file", "Mot de passe incorrect.": "Wrong password.", "Saisissez le mot de passe du fichier.": "Enter the file password.", "Lien TOM invalide": "Invalid TOM link", "Key invalide": "Invalid Key", "Configuration non reconnue": "Configuration not recognized", "Configuration reconnue": "Configuration recognized", "Nom du serveur": "Server name", "Ex : Mon serveur": "E.g. My server", "Enregistrer": "Save", "Configuration invalide ou format non reconnu.": "Invalid configuration or unrecognized format.", "Fichier vide": "Empty file", "Fichier .tom invalide ou format non reconnu": "Invalid .tom file or unrecognized format", "Lecture du fichier impossible": "Unable to read the file", "Confirmer l’importation": "Confirm import", "Vérifiez le nom et les informations avant d’ajouter ce serveur.": "Check the name and details before adding this server.", "Importer": "Import", "Ce fichier a expiré": "This file has expired", "Aucun serveur à importer": "No server to import", "Serveur enregistré": "Server saved", "Clé invalide": "Invalid key", "Exporter et partager": "Export and share", "Envoyer le fichier .tom avec une application": "Send the .tom file with an app", "Exporter en fichier .tom": "Export as .tom file", "Enregistrer le fichier sur l’appareil": "Save the file on your device", "Exporter le lien": "Export link", "Générer un lien TOM: à copier dans le presse-papiers": "Generate a TOM: link to copy to the clipboard", "Exporter en Key": "Export as Key", "Clé TOM_TUNNEL facile à copier et à coller": "TOM_TUNNEL key, easy to copy and paste", "Partager le serveur": "Share server", "Exporter le serveur": "Export server", "Nom": "Name", "Date d’expiration (optionnelle)": "Expiry date (optional)", "Masquer les informations sensibles": "Hide sensitive information", "Mot de passe, identifiants et clés restent cachés chez le destinataire. Aucun mot de passe à définir.": "Passwords, credentials and keys stay hidden for the recipient. No password to set.", "Exporter .tom": "Export .tom", "Copier le lien": "Copy link", "Générer la Key": "Generate Key", "Lien TOM copié": "TOM link copied", "Key copiée": "Key copied", "Votre Key": "Your Key", "Copiez cette clé puis collez-la dans « Importer du presse-papier ».": "Copy this key, then paste it in “Import from clipboard”.", "Copier": "Copy", "Enregistrer le fichier": "Save file", "Choisissez l’emplacement sur votre appareil.": "Choose a location on your device.", "Dossier": "Folder", "Téléchargements": "Downloads", "Partager via": "Share via", "Fichier": "File", "Fichier copié": "File copied", "Fichier copié (aperçu)": "File copied (preview)", "Modifier le serveur": "Edit server", "Protocole": "Protocol", "Adresse / Host": "Address / Host", "Alter ID": "Alter ID", "Méthode de chiffrement": "Encryption method", "Réseau (Network)": "Network", "Aucune": "None", "Aucun": "None", "Sécurité (Security)": "Security", "Flow (si nécessaire)": "Flow (if needed)", "Renseignez l’adresse du serveur.": "Enter the server address.", "Le port doit être compris entre 1 et 65535.": "Port must be between 1 and 65535.", "UUID invalide.": "Invalid UUID.", "Renseignez le mot de passe.": "Enter the password.", "Nom du serveur SlowDNS": "SlowDNS server name", "Ex : Mon serveur SlowDNS": "E.g. My SlowDNS server", "Résolveur DNS": "DNS resolver", "Clé publique": "Public key", "Clé publique du serveur SlowDNS": "SlowDNS server public key", "Hôte SSH": "SSH host", "Port SSH": "SSH port", "Port DNS": "DNS port", "Nom d’utilisateur": "Username", "Identifiant SSH": "SSH username", "Mot de passe SSH": "SSH password", "Renseignez le nameserver (NS).": "Enter the nameserver (NS).", "Renseignez la clé publique du serveur.": "Enter the server public key.", "Renseignez l’hôte SSH.": "Enter the SSH host.", "Renseignez le nom d’utilisateur.": "Enter the username.", "Ex : Mon serveur WebSocket": "E.g. My WebSocket server", "Hôte / Serveur": "Host / Server", "Host (en-tête WebSocket)": "Host (WebSocket header)", "Chemin WebSocket (Path)": "WebSocket path", "Payload personnalisé (optionnel)": "Custom payload (optional)", "Renseignez l’hôte du serveur.": "Enter the server host.", "SSH WebSocket ne démarre pas": "SSH WebSocket won’t start", "Le tunnel WebSocket n’a pas pu démarrer. Vérifiez l’hôte, le port, le chemin et les identifiants.": "The WebSocket tunnel could not start. Check host, port, path and credentials.", "Effacer le journal": "Clear logs", "Aucun événement": "No events", "Les événements de connexion apparaîtront ici.": "Connection events will appear here.", "Connexion en cours": "Connecting", "Échec de la connexion": "Connection failed", "Déconnecté": "Disconnected", "Mode Boost": "Boost mode", "Optimise la connexion pour plus de vitesse. Pris en compte à la prochaine connexion.": "Optimizes the connection for speed. Applied on the next connection.", "Mode Boost activé": "Boost mode on", "Mode Boost désactivé": "Boost mode off", "Thème": "Theme", "Noir, Blanc ou Système.": "Dark, Light or System.", "Thèmes": "Themes", "Choisir un thème": "Choose a theme", "Noir": "Dark", "Blanc": "Light", "Système": "System", "Fond sombre, accents orange": "Dark background, orange accents", "Fond clair, accents orange": "Light background, orange accents", "Suit le réglage clair ou sombre du téléphone": "Follows the phone’s light or dark setting", "Configurer le DNS utilisé par le VPN": "Set the DNS used by the VPN", "Le DNS est appliqué à chaque nouvelle connexion VPN.": "DNS is applied on every new VPN connection.", "Serveur DNS": "DNS server", "Enregistrer le DNS": "Save DNS", "DNS enregistré": "DNS saved", "Renseignez un serveur DNS.": "Enter a DNS server.", "Adresse DNS invalide.": "Invalid DNS address.", "Exemples : 1.1.1.1, 8.8.8.8 ou une adresse IPv6 DNS.": "Examples: 1.1.1.1, 8.8.8.8 or an IPv6 DNS address.", "Langue": "Language", "Choisissez la langue de l’application.": "Choose the app language.", "Contact": "Contact", "Telegram et WhatsApp": "Telegram and WhatsApp", "Canal Telegram": "Telegram channel", "Besoin d’aide ? Contactez-nous.": "Need help? Contact us.", "Copier le numéro WhatsApp": "Copy WhatsApp number", "Numéro copié": "Number copied", "Copié": "Copied", "Impossible d’ouvrir Telegram": "Unable to open Telegram", "Impossible d’ouvrir WhatsApp": "Unable to open WhatsApp", "À propos": "About", "Version, fonctionnement et informations sur TOM TUNNEL.": "Version, how it works and information about TOM TUNNEL.", "Développé par": "Developed by", "Protocoles": "Protocols", "Fonctionnement": "How it works", "TOM TUNNEL se connecte à vos propres serveurs : Xray pour VLESS, VMess, Trojan et Shadowsocks, SlowDNS et SSH WebSocket pour les tunnels SSH. Aucun serveur n’est imposé et vos configurations restent sur votre appareil.": "TOM TUNNEL connects to your own servers: Xray for VLESS, VMess, Trojan and Shadowsocks, SlowDNS and SSH WebSocket for SSH tunnels. No server is imposed and your configurations stay on your device.", "Configuration": "Configuration", "Serveur": "Server", "Serveur masqué (profil protégé)": "Hidden (protected profile)"};
+const EN_THEME={'Noir':'Dark','Blanc':'Light','Système':'System'};
+const EN_PAT=[
+  [/^Expiration : (.+)$/,'Expiry: $1'],
+  [/^Type : (.+)\. Donnez un nom à ce serveur\.$/,'Type: $1. Give this server a name.'],
+  [/^« (.+) » sera supprimé de cet appareil\.$/,'“$1” will be removed from this device.'],
+  [/^Thème (.+) appliqué$/,(m,a)=>'Theme applied: '+(EN_THEME[a]||a)],
+  [/^(.+) · effet à la prochaine connexion$/,(m,a)=>tr(a)+' · applies on next connection'],
+  [/^Partagé via (.+?)( \(aperçu\))?$/,(m,a,b)=>'Shared via '+a+(b?' (preview)':'')],
+  [/^(.+) enregistré \(aperçu\)$/,'$1 saved (preview)'],
+  [/^Configuration : (.+)$/,'Configuration: $1'],
+  [/^Serveur : masqué \(profil protégé\)$/,'Server: hidden (protected profile)'],
+  [/^Serveur : (.+)$/,'Server: $1']
+];
+function tr(s){
+  if(S.lang!=='en'||!s)return s;
+  if(s.indexOf('\n')>-1)return s.split('\n').map(tr).join('\n');
+  const core=s.trim();if(!core)return s;
+  let out=EN[core];
+  if(out===undefined)for(const [re,to] of EN_PAT){if(re.test(core)){out=core.replace(re,to);break}}
+  return out===undefined?s:s.replace(core,()=>out);
 }
-};
-function t(k){const L=I18N[S.lang||'fr']||I18N.fr;return L[k]||I18N.fr[k]||k}
-function setLang(code){S.lang=code==='en'?'en':'fr';try{localStorage.setItem('tt-lang',S.lang)}catch(e){}document.documentElement.lang=S.lang;toast(S.lang==='en'?'Language: English':'Langue : Français');closePage();render()}
-function loadLang(){try{const v=localStorage.getItem('tt-lang');if(v==='en'||v==='fr')S.lang=v}catch(e){}document.documentElement.lang=S.lang||'fr'}
-function langHTML(){
-  const cur=S.lang||'fr';
-  return head(t('language'))+`<div class="card list">
-    <button class="row" onclick="setLang('fr')"><span class="grow"><div class="tt">Français</div><div class="ss">Interface en français</div></span>${cur==='fr'?`<span style="color:var(--acc-ink)">${ic('check')}</span>`:''}</button>
-    <button class="row" onclick="setLang('en')"><span class="grow"><div class="tt">English</div><div class="ss">English interface</div></span>${cur==='en'?`<span style="color:var(--acc-ink)">${ic('check')}</span>`:''}</button>
-  </div><p class="hint">${cur==='en'?'Choose your preferred language.':'Choisissez votre langue préférée.'}</p>`;
+const TR_ATTRS=['placeholder','aria-label','title'];
+function trTree(n){
+  if(n.nodeType===3){const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}
+  if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE')return;
+  TR_ATTRS.forEach(a=>{const v=n.getAttribute(a);if(v){const t=tr(v);if(t!==v)n.setAttribute(a,t)}});
+  n.childNodes.forEach(trTree);
 }
-
-/* ---------- Config share API (TOM_TUNNEL keys) ---------- */
-const API_BASE='https://api.tomtunnel.com/v1';
-async function apiCreateConfig(serverObj, title, expiresDays){
-  const body={
-    app:'TOM_TUNNEL', version:'1.0.0',
-    config: btoa(unescape(encodeURIComponent(JSON.stringify(serverObj)))),
-    title: title||serverObj.name||'Config',
-    description: serverObj.type||'',
-    expires: expiresDays||30,
-    password:false
-  };
-  const r=await fetch(API_BASE+'/configs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  return r.json();
+const trObs=new MutationObserver(ms=>{
+  if(S.lang!=='en')return;
+  trObs.disconnect();
+  ms.forEach(m=>{if(m.type==='characterData')trTree(m.target);else m.addedNodes.forEach(trTree)});
+  trObs.observe(document.body,{childList:true,characterData:true,subtree:true});
+});
+function applyLang(){
+  document.documentElement.lang=S.lang;
+  document.title='TOM TUNNEL';
+  if(S.lang==='en')trTree(document.body);
 }
-async function apiGetConfig(key){
-  const r=await fetch(API_BASE+'/configs/'+encodeURIComponent(key),{method:'GET'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  return r.json();
+function setLang(l){
+  if(!LANGS[l])return;
+  S.lang=l;try{localStorage.setItem('tt-lang',l)}catch(e){}
+  render();applyLang();
+  toast(l==='en'?'Language: English':'Langue : Français');
 }
-async function apiDeleteConfig(key){
-  const r=await fetch(API_BASE+'/configs/'+encodeURIComponent(key),{method:'DELETE'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  return r.json();
+function initLang(){
+  let l='';try{l=localStorage.getItem('tt-lang')||''}catch(e){}
+  if(!LANGS[l])l=((navigator.language||'fr').slice(0,2)==='en')?'en':'fr';
+  S.lang=l;
+  trObs.observe(document.body,{childList:true,characterData:true,subtree:true});
 }
-async function createShareKey(){
-  const sv=curServer();
-  if(!sv){toast(S.lang==='en'?'Select a server first':'Sélectionnez d’abord un serveur','bad');return}
-  try{
-    toast(S.lang==='en'?'Creating key…':'Création de la clé…');
-    const res=await apiCreateConfig(sv, sv.name, 30);
-    if(res&&res.key){
-      const k=res.key;
-      try{if(NATIVE&&JT.copyText)JT.copyText(k);else navigator.clipboard.writeText(k)}catch(e){}
-      sheet(`<h3>${t('createKey')}</h3><p class="lead">${S.lang==='en'?'Share this key. Others can import it in TOM_TUNNEL.':'Partagez cette clé. Les autres pourront l’importer dans TOM_TUNNEL.'}</p>
-        <div class="card" style="font-family:monospace;font-size:15px;text-align:center;padding:16px;letter-spacing:.5px">${esc(k)}</div>
-        <div class="btns"><button class="btn ghost" onclick="closeSheet()">OK</button><button class="btn primary" onclick="if(NATIVE)JT.shareText('${esc(k)}');closeSheet()">${S.lang==='en'?'Share':'Partager'}</button></div>`);
-      log(S.lang==='en'?'Share key created': 'Clé de partage créée', k, 'imp');
-    } else toast(S.lang==='en'?'Failed to create key':'Échec de création de clé','bad');
-  }catch(e){
-    toast(S.lang==='en'?'API unavailable (use local export)':'API indisponible (utilisez l’export local)','bad');
-    log('API', String(e.message||e), 'err');
-  }
-}
-async function importShareKey(){
-  sheet(`<h3>${t('importKey')}</h3>
-    <label class="f"><span>Clé TOM_TUNNEL</span><input id="shareKeyIn" placeholder="TOM_TUNNEL-XXXXX-XXXXX" autocomplete="off" spellcheck="false" autocapitalize="characters"></label>
-    <div id="shareKeyErr"></div>
-    <div class="btns"><button class="btn ghost" onclick="closeSheet()">${S.lang==='en'?'Cancel':'Annuler'}</button><button class="btn primary" onclick="doImportShareKey()">${S.lang==='en'?'Import':'Importer'}</button></div>`);
-}
-async function doImportShareKey(){
-  const key=($('#shareKeyIn').value||'').trim().toUpperCase();
-  if(!/^TOM_TUNNEL-[A-Z0-9]{5}-[A-Z0-9]{5}$/.test(key)){
-    $('#shareKeyErr').innerHTML='<p class="msg" role="alert">'+(S.lang==='en'?'Invalid key format':'Format de clé invalide')+'</p>';
-    return;
-  }
-  try{
-    toast(S.lang==='en'?'Downloading…':'Téléchargement…');
-    const res=await apiGetConfig(key);
-    if(!res||!res.success||!res.config) throw new Error('empty');
-    let o;
-    try{ o=JSON.parse(decodeURIComponent(escape(atob(res.config)))); }
-    catch(e){ o=JSON.parse(atob(res.config)); }
-    if(!o||!o.type) throw new Error('bad config');
-    o.name = res.title || o.name || key;
-    o.id = Date.now();
-    confirmJephImport(o, res.title||key);
-    closeSheet();
-    log(S.lang==='en'?'Config imported from key':'Config importée via clé', key, 'imp');
-  }catch(e){
-    $('#shareKeyErr').innerHTML='<p class="msg" role="alert">'+(S.lang==='en'?'Key not found or expired':'Clé introuvable ou expirée')+'</p>';
-    log('API import', String(e.message||e), 'err');
-  }
-}
-
-
-
-function openWhatsApp(){
-  const num='237654145540';
-  const url='https://wa.me/'+num;
-  if(NATIVE){try{JT.openUrl(url)}catch(e){toast('WhatsApp') }return}
-  try{window.open(url,'_blank')}catch(e){location.href=url}
-}
-function shareHTML(){
-  return head(t('shareKey'))+`
-  <p class="lead">${S.lang==='en'?'Share VPN configs with a unique key TOM_TUNNEL-XXXXX-XXXXX. Requires API api.tomtunnel.com.':'Partagez des configs VPN avec une clé unique TOM_TUNNEL-XXXXX-XXXXX. Nécessite l’API api.tomtunnel.com.'}</p>
-  <div class="card list">
-    ${opt('key',t('createKey'),S.lang==='en'?'Upload current server and get a key':'Envoyer le serveur actuel et obtenir une clé',"createShareKey()")}
-    ${opt('key',t('importKey'),S.lang==='en'?'Download a config from a key':'Télécharger une config depuis une clé',"importShareKey()")}
-  </div>
-  <p class="hint">${S.lang==='en'?'Keys expire after 30 days by default and can be revoked.':'Les clés expirent après 30 jours par défaut et peuvent être révoquées.'}</p>`;
-}
-
 /* ---------- démarrage ---------- */
-loadTheme();loadState();loadLang();applyTheme();render();
+loadTheme();loadState();applyTheme();initLang();render();applyLang();
 function runSplash(){
   const sp=document.getElementById('splash');if(!sp)return;
   const done=()=>{sp.remove();document.documentElement.classList.remove('booting')};
@@ -1666,6 +1575,5 @@ function runSplash(){
 }
 requestAnimationFrame(()=>setTimeout(runSplash,Math.max(0,750-performance.now())));
 </script>
-<script>setTimeout(function(){refreshDetectedIp();setInterval(refreshDetectedIp,15000)},800);</script>
 </body>
 </html>
