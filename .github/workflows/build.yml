@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build debug APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
 
     steps:
@@ -170,10 +170,24 @@ jobs:
         if: failure()
         shell: bash
         run: |
+          LOG="$RUNNER_TEMP/gradle.log"
+          [ -f "$LOG" ] || exit 0
+          emit() {
+            local m="$1"
+            m="${m//'%'/'%25'}"
+            m="${m//$'\r'/'%0D'}"
+            m="${m//$'\n'/'%0A'}"
+            echo "::error title=$2::$m"
+          }
+          WENT=$(awk '/What went wrong/{f=1} f{print} /^\* Try/{if(f)exit}' "$LOG" | head -25 | cut -c1-300)
+          [ -n "$WENT" ] && emit "$WENT" "Gradle - What went wrong"
+          KERR=$(grep -E '^e: |error: |AAPT|Manifest merger|Duplicate|Could not resolve|Unresolved reference' "$LOG" | head -15 | cut -c1-300)
+          [ -n "$KERR" ] && emit "$KERR" "Erreurs de compilation"
           {
             echo "## Erreurs Gradle"
             echo '```'
-            grep -nE "^e: |error:|What went wrong|Caused by|FAILED|Execution failed|AAPT|Manifest merger|not found|Could not" "$RUNNER_TEMP/gradle.log" | head -40 || true
+            echo "$WENT"
+            echo "$KERR"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
