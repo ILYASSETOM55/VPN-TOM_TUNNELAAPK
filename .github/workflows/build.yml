@@ -31,12 +31,14 @@ jobs:
         with:
           packages: "platform-tools"
 
-      - name: Install required Android SDK packages
+      - name: Install required Android SDK packages and accept licenses
         shell: bash
         run: |
           set -euxo pipefail
           sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
-          yes | sdkmanager --licenses
+          # Provide enough answers without a yes | sdkmanager pipeline.
+          yes_input="$(printf 'y\n%.0s' {1..100})"
+          sdkmanager --licenses <<< "$yes_input"
 
       - name: Set up Go
         uses: actions/setup-go@v5
