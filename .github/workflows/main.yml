@@ -1,0 +1,76 @@
+name: Build TOM_TUNNEL APK
+
+on:
+  push:
+    branches: [main, master, principal]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: |
+          set -eux
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      # Xray + hev-socks5-tunnel + DNSTT (SlowDNS). Si DNSTT échoue, le build échoue :
+      # on ne produit plus d'APK « cassé » dont SlowDNS reste bloqué sur « Connecting ».
+      - name: Bootstrap native engines
+        run: |
+          set -eux
+          bash scripts/bootstrap-engines.sh
+          for abi in arm64-v8a x86_64; do
+            for lib in libxray.so libdnstt.so; do
+              test -s "app/src/main/jniLibs/$abi/$lib"
+            done
+          done
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Build debug APK
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+
+      - name: Verify APK contains engines
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          unzip -l "$APK" | grep -E "lib/(arm64-v8a|x86_64)/lib(xray|dnstt)\.so"
+          ls -lh "$APK"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TOM_TUNNEL-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
