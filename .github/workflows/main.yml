@@ -126,9 +126,11 @@ jobs:
           set -eux
           mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64 /tmp/engines
 
+          # hev-socks5-tunnel (TUN → SOCKS5)
           curl -fL --retry 5 -o app/libs/hev-socks5-tunnel.aar \
             https://github.com/heiher/hev-socks5-tunnel/releases/download/2.19.1/hev-socks5-tunnel.aar
 
+          # Xray (VLESS / VMess / Trojan / Shadowsocks)
           curl -fL --retry 5 -o /tmp/engines/xray-arm64.zip \
             https://github.com/XTLS/Xray-core/releases/download/v26.10.21/Xray-android-arm64-v8a.zip
           unzip -p /tmp/engines/xray-arm64.zip xray > app/src/main/jniLibs/arm64-v8a/libxray.so
@@ -139,8 +141,39 @@ jobs:
           unzip -p /tmp/engines/xray-amd64.zip xray > app/src/main/jniLibs/x86_64/libxray.so
           chmod 755 app/src/main/jniLibs/x86_64/libxray.so
 
-          echo Engines OK
-          find app/src/main/jniLibs -type f
+          # DNSTT client (obligatoire pour SSH SlowDNS)
+          git clone --depth 1 https://github.com/dnstt-xyz/dnstt_xyz_app.git /tmp/engines/dnstt_xyz_app
+          CLIENT_DIR=/tmp/engines/dnstt_xyz_app/go_src/dnstt-client
+          MOD_DIR="$CLIENT_DIR"
+          while [ "$MOD_DIR" != "/tmp/engines/dnstt_xyz_app" ] && [ ! -f "$MOD_DIR/go.mod" ]; do
+            MOD_DIR="$(dirname "$MOD_DIR")"
+          done
+          if [ ! -f "$MOD_DIR/go.mod" ]; then
+            FOUND="$(find /tmp/engines/dnstt_xyz_app -name go.mod | head -n1)"
+            MOD_DIR="$(dirname "$FOUND")"
+          fi
+          REL="${CLIENT_DIR#"\( MOD_DIR"}"; REL=" \){REL#/}"
+          PKG="./${REL}"; [ -n "$REL" ] || PKG="."
+          echo "Module Go : $MOD_DIR  (paquet $PKG)"
+
+          for pair in "arm64:arm64-v8a" "amd64:x86_64"; do
+            goarch="\( {pair%%:*}"; abi=" \){pair##*:}"
+            out="app/src/main/jniLibs/$abi/libdnstt.so"
+            for goos in android linux; do
+              if (cd "$MOD_DIR" && GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 \
+                    go build -trimpath -ldflags='-s -w' -o "$out.tmp" "$PKG"); then
+                mv "$out.tmp" "$out"
+                chmod 755 "$out"
+                echo "DNSTT $abi compilé (GOOS=$goos)"
+                break
+              fi
+              rm -f "$out.tmp"
+            done
+            test -s "$out"
+          done
+
+          echo "=== Engines OK ==="
+          find app/src/main/jniLibs -type f -printf '%p (%s bytes)\n' | sort
           ls -lh app/libs
 
       - name: Setup Gradle
@@ -164,6 +197,7 @@ jobs:
 
       - name: Verify APK
         run: |
+          set -eux
           APK=app/build/outputs/apk/debug/app-debug.apk
           if [ ! -s "$APK" ]; then
             echo APK introuvable
@@ -171,6 +205,14 @@ jobs:
             exit 1
           fi
           ls -lh "$APK"
+
+          # Vérifier que libdnstt.so et libxray.so sont bien dans l'APK
+          unzip -l "$APK" | grep -E 'libdnstt\.so|libxray\.so|libhev' || true
+          echo "Vérification native libs:"
+          unzip -l "$APK" | grep -E 'lib/.*/lib(dnstt|xray)\.so' || {
+            echo "::error::libdnstt.so ou libxray.so manquant dans l'APK"
+            exit 1
+          }
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
