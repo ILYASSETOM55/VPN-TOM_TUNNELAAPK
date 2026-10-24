@@ -1,71 +1,247 @@
-name: Build TOM_TUNNEL APK
+name: Générer l'APK TOM_TUNNEL
 
 on:
-  push:
-    branches: [main, master, principal]
-  pull_request:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  GRADLE_VERSION: "8.10.2"
+  XRAY_VERSION: "v26.10.21"
+  HEV_VERSION: "2.19.1"
+
 jobs:
   build:
     name: Build debug APK
-    runs-on: ubuntu-latest
-    timeout-minutes: 50
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fix project structure
+        shell: bash
+        run: |
+          set -eu
+          mkdir -p app/libs app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86_64
+          ls -la
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install SDK packages
+      - name: Configure Android SDK
+        shell: bash
         run: |
-          set -eux
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          set -eu
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses >/dev/null || true
+          "$SDKM" "platform-tools" "platforms;android-34" "platforms;android-35" \
+                  "build-tools;34.0.0" "build-tools;35.0.0"
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
 
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version: "1.24"
+          cache: false
 
-      # Xray + hev-socks5-tunnel + DNSTT (SlowDNS). Si DNSTT échoue, le build échoue :
-      # on ne produit plus d'APK « cassé » dont SlowDNS reste bloqué sur « Connecting ».
-      - name: Bootstrap native engines
+      - name: Bootstrap native engines (Xray, hev-socks5-tunnel, DNSTT)
+        shell: bash
         run: |
-          set -eux
-          bash scripts/bootstrap-engines.sh
-          for abi in arm64-v8a x86_64; do
-            for lib in libxray.so libdnstt.so; do
-              test -s "app/src/main/jniLibs/$abi/$lib"
-            done
-          done
+          set -euo pipefail
 
-      - name: Setup Gradle
+          JNI="$GITHUB_WORKSPACE/app/src/main/jniLibs"
+          LIBS="$GITHUB_WORKSPACE/app/libs"
+          TMP="$RUNNER_TEMP/engines"
+          mkdir -p "$JNI/arm64-v8a" "$JNI/x86_64" "$LIBS" "$TMP"
+
+          # --- utilitaires -----------------------------------------------------
+          dl() {  # dl <url> <fichier>  (5 essais)
+            local url="$1" out="$2" i
+            for i in 1 2 3 4 5; do
+              if curl -fL --connect-timeout 20 --max-time 300 -o "$out" "$url"; then
+                [ -s "$out" ] && return 0
+              fi
+              echo "Échec téléchargement ($i/5) : $url" >&2
+              sleep 4
+            done
+            return 1
+          }
+          latest_tag() {  # latest_tag <owner/repo>
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/$1/releases/latest" \
+              | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/'
+          }
+
+          # --- 1) hev-socks5-tunnel (AAR) -------------------------------------
+          HEV_URL="https://github.com/heiher/hev-socks5-tunnel/releases/download/${HEV_VERSION}/hev-socks5-tunnel.aar"
+          if ! dl "$HEV_URL" "$LIBS/hev-socks5-tunnel.aar"; then
+            T="$(latest_tag heiher/hev-socks5-tunnel)"
+            echo "hev : repli sur la dernière version $T"
+            dl "https://github.com/heiher/hev-socks5-tunnel/releases/download/${T}/hev-socks5-tunnel.aar" \
+               "$LIBS/hev-socks5-tunnel.aar"
+          fi
+          unzip -tq "$LIBS/hev-socks5-tunnel.aar" >/dev/null
+
+          # --- 2) Xray : VLESS / VMess / Trojan / Shadowsocks -----------------
+          get_xray() {  # get_xray <asset> <abi>
+            local asset="$1" abi="$2" ver="$XRAY_VERSION"
+            local base="https://github.com/XTLS/Xray-core/releases/download"
+            if ! dl "$base/$ver/$asset" "$TMP/$asset"; then
+              ver="$(latest_tag XTLS/Xray-core)"
+              echo "Xray : repli sur la dernière version $ver"
+              dl "$base/$ver/$asset" "$TMP/$asset"
+            fi
+            unzip -tq "$TMP/$asset" >/dev/null
+            unzip -p "$TMP/$asset" xray > "$JNI/$abi/libxray.so"
+            chmod 755 "$JNI/$abi/libxray.so"
+          }
+          get_xray "Xray-android-arm64-v8a.zip" "arm64-v8a"
+          get_xray "Xray-android-amd64.zip"     "x86_64"
+
+          # --- 3) DNSTT (SSH SlowDNS) : client Go statique --------------------
+          rm -rf "$TMP/dnstt_xyz_app"
+          git clone --depth 1 https://github.com/dnstt-xyz/dnstt_xyz_app.git "$TMP/dnstt_xyz_app"
+
+          CLIENT_DIR="$TMP/dnstt_xyz_app/go_src/dnstt-client"
+          if [ -f "$CLIENT_DIR/go.mod" ]; then
+            MOD_DIR="$CLIENT_DIR"
+          else
+            MOD_DIR="$TMP/dnstt_xyz_app/go_src"
+          fi
+          [ -f "$MOD_DIR/go.mod" ] || { echo "go.mod introuvable dans $MOD_DIR" >&2; exit 1; }
+
+          if [ "$CLIENT_DIR" = "$MOD_DIR" ]; then
+            REL="."
+          else
+            REL="./${CLIENT_DIR#"$MOD_DIR"/}"
+          fi
+          echo "Module Go : ${MOD_DIR} (paquet ${REL})"
+
+          cd "$MOD_DIR"
+          for pair in "arm64:arm64-v8a" "amd64:x86_64"; do
+            goarch="${pair%%:*}"
+            abi="${pair##*:}"
+            out="$JNI/${abi}/libdnstt.so"
+            echo "Build dnstt-client ${goarch} -> ${out}"
+            GOOS=linux GOARCH="$goarch" CGO_ENABLED=0 \
+              go build -trimpath -ldflags="-s -w" -o "$out" "$REL"
+            chmod 755 "$out"
+          done
+          cd "$GITHUB_WORKSPACE"
+
+          # --- 4) Vérification finale ----------------------------------------
+          echo "=== Vérification des binaires ==="
+          for f in "$JNI"/arm64-v8a/libxray.so "$JNI"/arm64-v8a/libdnstt.so \
+                   "$JNI"/x86_64/libxray.so   "$JNI"/x86_64/libdnstt.so; do
+            [ -s "$f" ] || { echo "MANQUANT : $f" >&2; exit 1; }
+            echo "$(du -h "$f" | cut -f1)  $f"
+            file "$f" || true
+          done
+          ls -la "$LIBS"
+
+      - name: Auto-fix Gradle config
+        shell: bash
+        run: |
+          set -eu
+          touch gradle.properties
+          grep -q '^org.gradle.jvmargs' gradle.properties || \
+            echo 'org.gradle.jvmargs=-Xmx3g -Dfile.encoding=UTF-8' >> gradle.properties
+          grep -q '^android.useAndroidX' gradle.properties || \
+            echo 'android.useAndroidX=true' >> gradle.properties
+          grep -q '^kotlin.code.style' gradle.properties || \
+            echo 'kotlin.code.style=official' >> gradle.properties
+
+          if [ -f app/build.gradle.kts ]; then
+            F=app/build.gradle.kts
+            if ! grep -q 'hev-socks5-tunnel' "$F" && ! grep -qE 'fileTree|libs/' "$F"; then
+              printf '\ndependencies {\n    implementation(files("libs/hev-socks5-tunnel.aar"))\n}\n' >> "$F"
+              echo "AAR hev ajouté aux dépendances"
+            fi
+            if ! grep -q 'useLegacyPackaging' "$F"; then
+              printf '\nandroid {\n    packaging {\n        jniLibs {\n            useLegacyPackaging = true\n        }\n    }\n}\n' >> "$F"
+              echo "useLegacyPackaging activé"
+            fi
+          elif [ -f app/build.gradle ]; then
+            F=app/build.gradle
+            if ! grep -q 'hev-socks5-tunnel' "$F" && ! grep -qE 'fileTree|libs/' "$F"; then
+              printf '\ndependencies {\n    implementation files("libs/hev-socks5-tunnel.aar")\n}\n' >> "$F"
+            fi
+            if ! grep -q 'useLegacyPackaging' "$F"; then
+              printf '\nandroid {\n    packaging {\n        jniLibs {\n            useLegacyPackaging = true\n        }\n    }\n}\n' >> "$F"
+            fi
+          else
+            echo "app/build.gradle(.kts) introuvable" >&2
+            ls -la . app || true
+            exit 1
+          fi
+
+          if [ -f app/src/main/AndroidManifest.xml ] && \
+             ! grep -q 'extractNativeLibs' app/src/main/AndroidManifest.xml; then
+            sed -i '0,/<application/s//<application android:extractNativeLibs="true"/' \
+              app/src/main/AndroidManifest.xml
+          fi
+
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.7"
+          gradle-version: ${{ env.GRADLE_VERSION }}
 
       - name: Build debug APK
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
-
-      - name: Verify APK contains engines
+        shell: bash
         run: |
-          APK=app/build/outputs/apk/debug/app-debug.apk
-          test -s "$APK"
-          unzip -l "$APK" | grep -E "lib/(arm64-v8a|x86_64)/lib(xray|dnstt)\.so"
-          ls -lh "$APK"
+          set -eo pipefail
+          if [ -f ./gradlew ]; then
+            chmod +x ./gradlew
+            GRADLE="./gradlew"
+          else
+            GRADLE="gradle"
+          fi
+          "$GRADLE" --version
+          "$GRADLE" --no-daemon --stacktrace --console=plain :app:assembleDebug \
+            2>&1 | tee "$RUNNER_TEMP/gradle.log"
+
+      - name: Résumé des erreurs
+        if: failure()
+        shell: bash
+        run: |
+          LOG="$RUNNER_TEMP/gradle.log"
+          [ -f "$LOG" ] || exit 0
+          emit() {
+            local m="$1"
+            m="${m//'%'/'%25'}"
+            m="${m//$'\r'/'%0D'}"
+            m="${m//$'\n'/'%0A'}"
+            echo "::error title=$2::$m"
+          }
+          WENT=$(awk '/What went wrong/{f=1} f{print} /^\* Try/{if(f)exit}' "$LOG" | head -25 | cut -c1-300)
+          [ -n "$WENT" ] && emit "$WENT" "Gradle - What went wrong"
+          KERR=$(grep -E '^e: |error: |AAPT|Manifest merger|Duplicate|Could not resolve|Unresolved reference' "$LOG" | head -15 | cut -c1-300)
+          [ -n "$KERR" ] && emit "$KERR" "Erreurs de compilation"
+          {
+            echo "## Erreurs Gradle"
+            echo '```'
+            echo "$WENT"
+            echo "$KERR"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -73,4 +249,11 @@ jobs:
           name: TOM_TUNNEL-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-          retention-days: 14
+
+      - name: Upload log Gradle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-log
+          path: ${{ runner.temp }}/gradle.log
+          if-no-files-found: ignore
