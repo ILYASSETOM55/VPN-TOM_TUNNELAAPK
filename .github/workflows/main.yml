@@ -193,11 +193,26 @@ jobs:
             exit 1
           fi
 
-          if [ -f app/src/main/AndroidManifest.xml ] && \
-             ! grep -q 'extractNativeLibs' app/src/main/AndroidManifest.xml; then
-            sed -i '0,/<application/s//<application android:extractNativeLibs="true"/' \
-              app/src/main/AndroidManifest.xml
-          fi
+          # Manifest : ajoute android:exported là où il manque (obligatoire targetSdk >= 31)
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path("app/src/main/AndroidManifest.xml")
+          if p.exists():
+              t = p.read_text(encoding="utf-8")
+              def fix(m):
+                  tag, attrs, inner = m.group(1), m.group(2), m.group(3)
+                  if "<intent-filter" in inner and "android:exported" not in attrs:
+                      val = "true"
+                      if tag == "service" and "android:permission" not in attrs:
+                          val = "false"
+                      print("exported ajouté sur", tag, re.findall(r'android:name="([^"]+)"', attrs)[:1])
+                      attrs = attrs + ' android:exported="' + val + '"'
+                  return "<" + tag + attrs + ">" + inner + "</" + tag + ">"
+              t2 = re.sub(r"<(activity|service|receiver)\b([^>]*?)(?<!/)>(.*?)</\1>", fix, t, flags=re.S)
+              if t2 != t:
+                  p.write_text(t2, encoding="utf-8")
+              print(p.read_text(encoding="utf-8"))
+          PY
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -233,7 +248,7 @@ jobs:
           }
           WENT=$(awk '/What went wrong/{f=1} f{print} /^\* Try/{if(f)exit}' "$LOG" | head -25 | cut -c1-300)
           [ -n "$WENT" ] && emit "$WENT" "Gradle - What went wrong"
-          KERR=$(grep -E '^e: |error: |AAPT|Manifest merger|Duplicate|Could not resolve|Unresolved reference' "$LOG" | head -15 | cut -c1-300)
+          KERR=$(grep -n -A3 -iE 'AndroidManifest\.xml.*error|^e: |error: |AAPT|Duplicate|Could not resolve|Unresolved reference|minSdkVersion|exported' "$LOG" | head -40 | cut -c1-300)
           [ -n "$KERR" ] && emit "$KERR" "Erreurs de compilation"
           {
             echo "## Erreurs Gradle"
