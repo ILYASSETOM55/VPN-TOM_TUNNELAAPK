@@ -1,28 +1,29 @@
-name: Générer l'APK TOM_TUNNEL
+name: Build APK TOM_TUNNEL
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - "**"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     name: Build debug APK
-    runs-on: ubuntu-latest
-    timeout-minutes: 40
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
-
-      - name: Fix project structure
-        shell: bash
-        run: |
-          set -eu
-          mkdir -p app/libs
-          mkdir -p app/src/main/jniLibs/arm64-v8a
-          mkdir -p app/src/main/jniLibs/x86_64
-          ls -la
+        with:
+          fetch-depth: 1
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -30,111 +31,49 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Configure Android SDK
-        shell: bash
-        run: |
-          set -eu
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
-            "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Install Go
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.24.x"
           cache: false
 
-      - name: Bootstrap native engines
+      - name: Install build utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl unzip git file
+
+      - name: Prepare native VPN engines
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
+          chmod +x scripts/bootstrap-engines.sh
+          ./scripts/bootstrap-engines.sh
 
-          JNI="$GITHUB_WORKSPACE/app/src/main/jniLibs"
-          TMP="$RUNNER_TEMP/engines"
-          mkdir -p "$GITHUB_WORKSPACE/app/libs" "$JNI/arm64-v8a" "$JNI/x86_64" "$TMP"
-
-          # 1) hev-socks5-tunnel (AAR)
-          curl -fL --retry 5 -o "$GITHUB_WORKSPACE/app/libs/hev-socks5-tunnel.aar" \
-            "https://github.com/heiher/hev-socks5-tunnel/releases/download/2.19.1/hev-socks5-tunnel.aar"
-
-          # 2) Xray (arm64 + amd64)
-          XRAY_VER="v26.10.21"
-          curl -fL --retry 5 -o "$TMP/xray-arm64.zip" \
-            "https://github.com/XTLS/Xray-core/releases/download/${XRAY_VER}/Xray-android-arm64-v8a.zip"
-          unzip -p "$TMP/xray-arm64.zip" xray > "$JNI/arm64-v8a/libxray.so"
-          chmod 755 "$JNI/arm64-v8a/libxray.so"
-
-          curl -fL --retry 5 -o "$TMP/xray-amd64.zip" \
-            "https://github.com/XTLS/Xray-core/releases/download/${XRAY_VER}/Xray-android-amd64.zip"
-          unzip -p "$TMP/xray-amd64.zip" xray > "$JNI/x86_64/libxray.so"
-          chmod 755 "$JNI/x86_64/libxray.so"
-
-          # 3) DNSTT (client Go)
-          git clone --depth 1 https://github.com/dnstt-xyz/dnstt_xyz_app.git "$TMP/dnstt_xyz_app"
-
-          CLIENT_DIR="$TMP/dnstt_xyz_app/go_src/dnstt-client"
-          if [ -f "$CLIENT_DIR/go.mod" ]; then
-            MOD_DIR="$CLIENT_DIR"
-          else
-            MOD_DIR="$TMP/dnstt_xyz_app/go_src"
-          fi
-          if [ ! -f "$MOD_DIR/go.mod" ]; then
-            echo "go.mod introuvable dans $MOD_DIR" >&2
-            exit 1
-          fi
-
-          if [ "$CLIENT_DIR" = "$MOD_DIR" ]; then
-            REL="."
-          else
-            REL="./${CLIENT_DIR#"$MOD_DIR"/}"
-          fi
-          echo "Module Go : ${MOD_DIR} (paquet ${REL})"
-
-          cd "$MOD_DIR"
-          for pair in "arm64:arm64-v8a" "amd64:x86_64"; do
-            goarch="${pair%%:*}"
-            abi="${pair##*:}"
-            out="$JNI/${abi}/libdnstt.so"
-            echo "Build dnstt-client pour ${goarch} -> ${out}"
-            # Binaire statique Linux (fonctionne sur Android, lancé depuis nativeLibraryDir)
-            GOOS=linux GOARCH="$goarch" CGO_ENABLED=0 \
-              go build -trimpath -ldflags="-s -w" -o "$out" "$REL"
-            chmod 755 "$out"
-          done
-
-          ls -la "$JNI"/*/
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
 
       - name: Build debug APK
         shell: bash
         run: |
-          set -eo pipefail
-          echo "--- Fichiers du projet ---"
-          ls -la . app app/libs app/src/main app/src/main/jniLibs/* || true
-          if [ -f ./gradlew ]; then
-            chmod +x ./gradlew
-            GRADLE="./gradlew"
-          else
-            curl -fL --retry 5 -o "$RUNNER_TEMP/gradle.zip" \
-              https://services.gradle.org/distributions/gradle-8.7-bin.zip
-            unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
-            GRADLE="$RUNNER_TEMP/gradle-8.7/bin/gradle"
-          fi
-          "$GRADLE" --no-daemon --stacktrace :app:assembleDebug 2>&1 | tee "$RUNNER_TEMP/gradle.log"
+          set -euxo pipefail
+          gradle --no-daemon --stacktrace :app:assembleDebug
 
-      - name: Résumé des erreurs
-        if: failure()
+      - name: Verify APK exists
         shell: bash
         run: |
-          {
-            echo "## Erreurs Gradle"
-            echo '```'
-            grep -nE "^e: |error:|What went wrong|Caused by|FAILED|Execution failed|AAPT|Manifest merger|not found|Could not" "$RUNNER_TEMP/gradle.log" | head -40 || true
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          set -euxo pipefail
+          find app/build/outputs/apk/debug -maxdepth 1 -type f -name "*.apk" -print
+          test -n "$(find app/build/outputs/apk/debug -maxdepth 1 -type f -name "*.apk" -print -quit)"
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TOM_TUNNEL-debug-apk
+          name: TOM_TUNNEL-debug-APK
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+          retention-days: 14
