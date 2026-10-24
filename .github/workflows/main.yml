@@ -209,6 +209,20 @@ jobs:
                       attrs = attrs + ' android:exported="' + val + '"'
                   return "<" + tag + attrs + ">" + inner + "</" + tag + ">"
               t2 = re.sub(r"<(activity|service|receiver)\b([^>]*?)(?<!/)>(.*?)</\1>", fix, t, flags=re.S)
+              # hev-socks5-tunnel.aar déclare minSdk 29 : on l'autorise avec minSdk 24 (lib native JNI)
+              if 'overrideLibrary="hev.socks5.tunnel"' not in t2:
+                  if "xmlns:tools=" not in t2:
+                      t2 = t2.replace("<manifest ", '<manifest xmlns:tools="http://schemas.android.com/tools" ', 1)
+                  m = re.search(r"<uses-sdk\b[^>]*?/?>", t2)
+                  if m:
+                      tag = m.group(0)
+                      if "overrideLibrary" in tag:
+                          tag2 = re.sub(r'tools:overrideLibrary="([^"]*)"', r'tools:overrideLibrary="\1,hev.socks5.tunnel"', tag)
+                      else:
+                          tag2 = tag.replace("<uses-sdk", '<uses-sdk tools:overrideLibrary="hev.socks5.tunnel"', 1)
+                      t2 = t2.replace(tag, tag2, 1)
+                  else:
+                      t2 = re.sub(r"(<manifest\b[^>]*>)", r'\1\n    <uses-sdk tools:overrideLibrary="hev.socks5.tunnel" />', t2, count=1)
               if t2 != t:
                   p.write_text(t2, encoding="utf-8")
               print(p.read_text(encoding="utf-8"))
