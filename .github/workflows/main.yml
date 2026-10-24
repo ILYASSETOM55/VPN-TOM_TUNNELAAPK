@@ -107,16 +107,30 @@ jobs:
       - name: Build debug APK
         shell: bash
         run: |
-          set -euo pipefail
+          set -eo pipefail
+          echo "--- Fichiers du projet ---"
+          ls -la . app app/libs app/src/main app/src/main/jniLibs/* || true
           if [ -f ./gradlew ]; then
             chmod +x ./gradlew
-            ./gradlew --no-daemon :app:assembleDebug
+            GRADLE="./gradlew"
           else
             curl -fL --retry 5 -o "$RUNNER_TEMP/gradle.zip" \
               https://services.gradle.org/distributions/gradle-8.7-bin.zip
             unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
-            "$RUNNER_TEMP/gradle-8.7/bin/gradle" --no-daemon :app:assembleDebug
+            GRADLE="$RUNNER_TEMP/gradle-8.7/bin/gradle"
           fi
+          "$GRADLE" --no-daemon --stacktrace :app:assembleDebug 2>&1 | tee "$RUNNER_TEMP/gradle.log"
+
+      - name: Résumé des erreurs
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## Erreurs Gradle"
+            echo '```'
+            grep -nE "^e: |error:|What went wrong|Caused by|FAILED|Execution failed|AAPT|Manifest merger|not found|Could not" "$RUNNER_TEMP/gradle.log" | head -40 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
